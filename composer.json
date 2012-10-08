@@ -1,0 +1,27 @@
+{
+    "name": "eloquent/composer-npm-bridge",
+    "description": "NPM integration for your Composer package.",
+    "keywords": ["composer","npm","package","integration","bridge"],
+    "homepage": "https://github.com/eloquent/composer-npm-bridge",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Erin Millard",
+            "email": "ezzatron@gmail.com",
+            "homepage": "http://ezzatron.com/"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "require-dev": {
+        "composer/composer": "dev-master@dev",
+        "eloquent/asplode": "1.*",
+        "phake/phake": "1.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "Eloquent\\Composer\\NPMBridge": "src"
+        }
+    }
+}
