@@ -1,6 +1,6 @@
 # Composer NPM bridge
 
-*NPM integration for your Composer package.*
+*NPM integration for Composer packages.*
 
 ## Code quality
 

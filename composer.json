@@ -1,6 +1,6 @@
 {
     "name": "eloquent/composer-npm-bridge",
-    "description": "NPM integration for your Composer package.",
+    "description": "NPM integration for Composer packages.",
     "keywords": ["composer","npm","package","integration","bridge"],
     "homepage": "https://github.com/eloquent/composer-npm-bridge",
     "license": "MIT",
