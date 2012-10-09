@@ -85,9 +85,11 @@ class NPMBridge
     public function postInstall(Event $event)
     {
         $io = $event->getIO();
-        $io->write('Installing NPM dependencies...', true);
 
+        $io->write('Installing NPM dependencies...', true);
         $this->executeNpm(array('install'), $io);
+
+        $io->write('Shrinkwrapping NPM modules...', true);
         $this->executeNpm(array('shrinkwrap'), $io);
     }
 
@@ -97,10 +99,13 @@ class NPMBridge
     public function postUpdate(Event $event)
     {
         $io = $event->getIO();
-        $io->write('Updating NPM dependencies...', true);
 
         $this->unwrap($io);
+
+        $io->write('Updating NPM dependencies...', true);
         $this->executeNpm(array('update'), $io);
+
+        $io->write('Shrinkwrapping NPM modules...', true);
         $this->executeNpm(array('shrinkwrap'), $io);
     }
 

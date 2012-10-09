@@ -132,6 +132,10 @@ class NPMBridgeTest extends PHPUnit_Framework_TestCase
                 array('install'),
                 $this->identicalTo($io)
             ),
+            Phake::verify($io)->write(
+                'Shrinkwrapping NPM modules...',
+                true
+            ),
             Phake::verify($this->_bridge)->executeNpm(
                 array('shrinkwrap'),
                 $this->identicalTo($io)
@@ -154,14 +158,18 @@ class NPMBridgeTest extends PHPUnit_Framework_TestCase
         $this->_bridge->postUpdate($this->_eventPostUpdate);
 
         Phake::inOrder(
+            Phake::verify($this->_bridge)->unwrap($this->identicalTo($io)),
             Phake::verify($io)->write(
                 'Updating NPM dependencies...',
                 true
             ),
-            Phake::verify($this->_bridge)->unwrap($this->identicalTo($io)),
             Phake::verify($this->_bridge)->executeNpm(
                 array('update'),
                 $this->identicalTo($io)
+            ),
+            Phake::verify($io)->write(
+                'Shrinkwrapping NPM modules...',
+                true
             ),
             Phake::verify($this->_bridge)->executeNpm(
                 array('shrinkwrap'),
