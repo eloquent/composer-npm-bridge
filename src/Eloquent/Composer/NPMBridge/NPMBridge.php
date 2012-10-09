@@ -86,10 +86,10 @@ class NPMBridge
     {
         $io = $event->getIO();
 
-        $io->write('Installing NPM dependencies...', true);
+        $io->write('<info>Installing NPM dependencies</info>');
         $this->executeNpm(array('install'), $io);
 
-        $io->write('Shrinkwrapping NPM modules...', true);
+        $io->write('<info>Shrinkwrapping NPM modules</info>');
         $this->executeNpm(array('shrinkwrap'), $io);
     }
 
@@ -102,10 +102,10 @@ class NPMBridge
 
         $this->unwrap($io);
 
-        $io->write('Updating NPM dependencies...', true);
+        $io->write('<info>Updating NPM dependencies</info>');
         $this->executeNpm(array('update'), $io);
 
-        $io->write('Shrinkwrapping NPM modules...', true);
+        $io->write('<info>Shrinkwrapping NPM modules</info>');
         $this->executeNpm(array('shrinkwrap'), $io);
     }
 
@@ -131,12 +131,12 @@ class NPMBridge
      */
     protected function unwrap(IOInterface $io)
     {
-        $io->write('Removing NPM shrinkwrap... ', false);
+        $io->write('<info>Removing NPM shrinkwrap</info>');
         if ($this->isolator->is_file('./npm-shrinkwrap.json')) {
             $this->isolator->unlink('./npm-shrinkwrap.json');
-            $io->write('done.', true);
+            $io->write('<info>NPM shrinkwrap removed</info>');
         } else {
-            $io->write('nothing to do.', true);
+            $io->write('NPM shrinkwrap not found');
         }
     }
 

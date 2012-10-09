@@ -124,18 +124,12 @@ class NPMBridgeTest extends PHPUnit_Framework_TestCase
         $this->_bridge->postInstall($this->_eventPostInstall);
 
         Phake::inOrder(
-            Phake::verify($io)->write(
-                'Installing NPM dependencies...',
-                true
-            ),
+            Phake::verify($io)->write('<info>Installing NPM dependencies</info>'),
             Phake::verify($this->_bridge)->executeNpm(
                 array('install'),
                 $this->identicalTo($io)
             ),
-            Phake::verify($io)->write(
-                'Shrinkwrapping NPM modules...',
-                true
-            ),
+            Phake::verify($io)->write('<info>Shrinkwrapping NPM modules</info>'),
             Phake::verify($this->_bridge)->executeNpm(
                 array('shrinkwrap'),
                 $this->identicalTo($io)
@@ -159,18 +153,12 @@ class NPMBridgeTest extends PHPUnit_Framework_TestCase
 
         Phake::inOrder(
             Phake::verify($this->_bridge)->unwrap($this->identicalTo($io)),
-            Phake::verify($io)->write(
-                'Updating NPM dependencies...',
-                true
-            ),
+            Phake::verify($io)->write('<info>Updating NPM dependencies</info>'),
             Phake::verify($this->_bridge)->executeNpm(
                 array('update'),
                 $this->identicalTo($io)
             ),
-            Phake::verify($io)->write(
-                'Shrinkwrapping NPM modules...',
-                true
-            ),
+            Phake::verify($io)->write('<info>Shrinkwrapping NPM modules</info>'),
             Phake::verify($this->_bridge)->executeNpm(
                 array('shrinkwrap'),
                 $this->identicalTo($io)
@@ -234,10 +222,10 @@ class NPMBridgeTest extends PHPUnit_Framework_TestCase
         Liberator::liberate($this->_bridge)->unwrap($io);
 
         Phake::inOrder(
-            Phake::verify($io)->write('Removing NPM shrinkwrap... ', false),
+            Phake::verify($io)->write('<info>Removing NPM shrinkwrap</info>'),
             Phake::verify($this->_isolator)->is_file('./npm-shrinkwrap.json'),
             Phake::verify($this->_isolator)->unlink('./npm-shrinkwrap.json'),
-            Phake::verify($io)->write('done.', true)
+            Phake::verify($io)->write('<info>NPM shrinkwrap removed</info>')
         );
     }
 
@@ -251,9 +239,9 @@ class NPMBridgeTest extends PHPUnit_Framework_TestCase
         Liberator::liberate($this->_bridge)->unwrap($io);
 
         Phake::inOrder(
-            Phake::verify($io)->write('Removing NPM shrinkwrap... ', false),
+            Phake::verify($io)->write('<info>Removing NPM shrinkwrap</info>'),
             Phake::verify($this->_isolator)->is_file('./npm-shrinkwrap.json'),
-            Phake::verify($io)->write('nothing to do.', true)
+            Phake::verify($io)->write('NPM shrinkwrap not found')
         );
         Phake::verify($this->_isolator, Phake::never())->unlink('./npm-shrinkwrap.json');
     }
