@@ -18,6 +18,11 @@ The bridge uses NPM's [shrinkwrap](https://npmjs.org/doc/shrinkwrap.html)
 system to achieve similar functionality to Composer's
 [lock files](http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file).
 
+Currently Composer does not pass events to the handler scripts of dependencies.
+This means that this component is, unfortunately, fairly useless in its current
+incarnation. In the event that Composer changes the way its scripts work, this
+component will be updated and may become more useful.
+
 ## Usage
 
 After adding the bridge to the project's Composer dependencies as described in
