@@ -1,7 +1,101 @@
 {
-    "hash": "2a0b4508e2e5498b4a717786be030cb1",
+    "hash": "9b42e1466675a79d9b973afbea5fd808",
     "packages": [
-
+        {
+            "name": "icecave/isolator",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/IcecaveStudios/isolator.git",
+                "reference": "2.1.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/IcecaveStudios/isolator/zipball/2.1.0",
+                "reference": "2.1.0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phake/phake": "1.*"
+            },
+            "time": "2012-08-12 10:37:39",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "Icecave\\Isolator": "lib"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "James Harris",
+                    "email": "james.harris@icecave.com.au"
+                }
+            ],
+            "description": "Mock out calls to built-in PHP functions.",
+            "homepage": "https://github.com/IcecaveStudios/isolator",
+            "keywords": [
+                "phpunit",
+                "test",
+                "mock",
+                "fake",
+                "unit",
+                "phake"
+            ]
+        },
+        {
+            "name": "symfony/process",
+            "version": "v2.1.2",
+            "target-dir": "Symfony/Component/Process",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/Process",
+                "reference": "v2.1.2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/symfony/Process/zipball/v2.1.2",
+                "reference": "v2.1.2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "time": "2012-09-18 22:37:29",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.1-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\Process": ""
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Process Component",
+            "homepage": "http://symfony.com"
+        }
     ],
     "packages-dev": [
         {
@@ -10,12 +104,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer",
-                "reference": "62bb5b339b657cafccdee72a1a3e92490eb14a35"
+                "reference": "fb4183d5ad524a686a6e048162282fe1fc6ac603"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/composer/composer/zipball/62bb5b339b657cafccdee72a1a3e92490eb14a35",
-                "reference": "62bb5b339b657cafccdee72a1a3e92490eb14a35",
+                "url": "https://github.com/composer/composer/zipball/fb4183d5ad524a686a6e048162282fe1fc6ac603",
+                "reference": "fb4183d5ad524a686a6e048162282fe1fc6ac603",
                 "shasum": ""
             },
             "require": {
@@ -30,7 +124,7 @@
                 "ext-zip": "Enabling the zip extension allows you to unzip archives, and allows gzip compression of all internet traffic",
                 "ext-openssl": "Enabling the openssl extension allows you to access https URLs for repositories and packages"
             },
-            "time": "1349456739",
+            "time": "1349719542",
             "bin": [
                 "bin/composer"
             ],
@@ -122,31 +216,29 @@
             ]
         },
         {
-            "name": "icecave/isolator",
-            "version": "2.1.0",
+            "name": "eloquent/liberator",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/IcecaveStudios/isolator.git",
-                "reference": "2.1.0"
+                "url": "https://github.com/eloquent/liberator.git",
+                "reference": "1.1.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/IcecaveStudios/isolator/zipball/2.1.0",
-                "reference": "2.1.0",
+                "url": "https://github.com/eloquent/liberator/zipball/1.1.0",
+                "reference": "1.1.0",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": ">=5.3.0",
+                "eloquent/pops": "3.*"
             },
-            "require-dev": {
-                "phake/phake": "1.*"
-            },
-            "time": "2012-08-12 10:37:39",
+            "time": "2012-08-02 13:30:51",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
                 "psr-0": {
-                    "Icecave\\Isolator": "lib"
+                    "Eloquent\\Liberator": "src"
                 }
             },
             "license": [
@@ -154,19 +246,64 @@
             ],
             "authors": [
                 {
-                    "name": "James Harris",
-                    "email": "james.harris@icecave.com.au"
+                    "name": "Erin Millard",
+                    "email": "ezzatron@gmail.com",
+                    "homepage": "http://ezzatron.com/"
                 }
             ],
-            "description": "Mock out calls to built-in PHP functions.",
-            "homepage": "https://github.com/IcecaveStudios/isolator",
+            "description": "A proxy for circumventing PHP access modifier restrictions.",
+            "homepage": "https://github.com/eloquent/liberator",
             "keywords": [
-                "phpunit",
-                "test",
-                "mock",
-                "fake",
-                "unit",
-                "phake"
+                "reflection",
+                "object",
+                "proxy",
+                "access",
+                "modifier",
+                "private",
+                "protected"
+            ]
+        },
+        {
+            "name": "eloquent/pops",
+            "version": "3.1.0",
+            "source": {
+                "type": "git",
+                "url": "git://github.com/eloquent/pops.git",
+                "reference": "3.1.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/eloquent/pops/zipball/3.1.0",
+                "reference": "3.1.0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "time": "2012-08-02 13:17:58",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "Eloquent\\Pops": "src"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Erin Millard",
+                    "email": "ezzatron@gmail.com",
+                    "homepage": "http://ezzatron.com/"
+                }
+            ],
+            "description": "PHP object proxy system.",
+            "homepage": "https://github.com/eloquent/pops",
+            "keywords": [
+                "object",
+                "proxy",
+                "escaping"
             ]
         },
         {
@@ -407,53 +544,6 @@
                 }
             ],
             "description": "Symfony Finder Component",
-            "homepage": "http://symfony.com"
-        },
-        {
-            "name": "symfony/process",
-            "version": "v2.1.2",
-            "target-dir": "Symfony/Component/Process",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/Process",
-                "reference": "v2.1.2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://github.com/symfony/Process/zipball/v2.1.2",
-                "reference": "v2.1.2",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "time": "2012-09-18 22:37:29",
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.1-dev"
-                }
-            },
-            "installation-source": "dist",
-            "autoload": {
-                "psr-0": {
-                    "Symfony\\Component\\Process": ""
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony Process Component",
             "homepage": "http://symfony.com"
         }
     ],

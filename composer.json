@@ -12,11 +12,14 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0"
+        "php": ">=5.3.0",
+        "icecave/isolator": "2.*",
+        "symfony/process": "2.*"
     },
     "require-dev": {
         "composer/composer": "dev-master@dev",
         "eloquent/asplode": "1.*",
+        "eloquent/liberator": "1.*",
         "phake/phake": "1.*"
     },
     "autoload": {
