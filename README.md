@@ -2,11 +2,13 @@
 
 *NPM integration for Composer packages.*
 
+[![Build Status]](http://travis-ci.org/eloquent/composer-npm-bridge)
+[![Test Coverage]](http://eloquent-software.com/composer-npm-bridge/artifacts/tests/coverage/)
+
 ## Installation
 
-* Add 'eloquent/composer-npm-bridge' to the project's `composer.json`
-  dependencies
-* Run `composer install`
+Available as [Composer](http://getcomposer.org/) package
+[eloquent/composer-npm-bridge](https://packagist.org/packages/eloquent/composer-npm-bridge).
 
 ## What does the Composer NPM bridge do?
 
@@ -50,13 +52,6 @@ The install/update process will generate an `npm-shrinkwrap.json` file which
 is similar in purpose to a Composer lock file. This file should be added to the
 source code management repository (Git/Subversion/Mercurial etc.)
 
-## Code quality
-
-Composer NPM bridge strives to attain a high level of quality. A full test suite
-is available, and code coverage is closely monitored.
-
-### Latest revision test suite results
-[![Build Status](https://secure.travis-ci.org/eloquent/composer-npm-bridge.png)](http://travis-ci.org/eloquent/composer-npm-bridge)
-
-### Latest revision test suite coverage
-<http://ci.ezzatron.com/report/composer-npm-bridge/coverage/>
+<!-- references -->
+[Build Status]: https://raw.github.com/eloquent/composer-npm-bridge/gh-pages/artifacts/images/icecave/regular/build-status.png
+[Test Coverage]: https://raw.github.com/eloquent/composer-npm-bridge/gh-pages/artifacts/images/icecave/regular/coverage.png

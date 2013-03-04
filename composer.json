@@ -13,14 +13,13 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "icecave/isolator": "2.*",
-        "symfony/process": "2.*"
+        "composer/composer": "dev-master",
+        "icecave/isolator": "~2",
+        "symfony/process": "~2"
     },
     "require-dev": {
-        "composer/composer": "dev-master@dev",
-        "eloquent/asplode": "1.*",
-        "eloquent/liberator": "1.*",
-        "phake/phake": "1.*"
+        "eloquent/liberator": "~1",
+        "icecave/archer": "~0.2"
     },
     "autoload": {
         "psr-0": {
