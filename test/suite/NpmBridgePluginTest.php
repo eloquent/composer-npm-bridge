@@ -13,8 +13,10 @@ namespace Eloquent\Composer\NpmBridge;
 
 use Composer\Composer;
 use Composer\IO\NullIO;
+use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
 use PHPUnit_Framework_TestCase;
+use Phake;
 
 class NpmBridgePluginTest extends PHPUnit_Framework_TestCase
 {
@@ -22,15 +24,31 @@ class NpmBridgePluginTest extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
+        $this->bridgeFactory = Phake::mock('Eloquent\Composer\NpmBridge\NpmBridgeFactoryInterface');
+        $this->plugin = new NpmBridgePlugin($this->bridgeFactory);
+
+        $this->bridge = Phake::mock('Eloquent\Composer\NpmBridge\NpmBridgeInterface');
+        $this->composer = new Composer;
+        $this->io = new NullIO;
+
+        Phake::when($this->bridgeFactory)->create(Phake::anyParameters())->thenReturn($this->bridge);
+    }
+
+    public function testConstructor()
+    {
+        $this->assertSame($this->bridgeFactory, $this->plugin->bridgeFactory());
+    }
+
+    public function testConstructorDefaults()
+    {
         $this->plugin = new NpmBridgePlugin;
+
+        $this->assertEquals(new NpmBridgeFactory, $this->plugin->bridgeFactory());
     }
 
     public function testActivate()
     {
-        $composer = new Composer;
-        $io = new NullIO;
-
-        $this->assertNull($this->plugin->activate($composer, $io));
+        $this->assertNull($this->plugin->activate($this->composer, $this->io));
     }
 
     public function testGetSubscribedEvents()
@@ -41,6 +59,26 @@ class NpmBridgePluginTest extends PHPUnit_Framework_TestCase
                 ScriptEvents::POST_UPDATE_CMD => 'onPostUpdateCmd',
             ),
             $this->plugin->getSubscribedEvents()
+        );
+    }
+
+    public function testOnPostInstallCmd()
+    {
+        $this->plugin->onPostInstallCmd(new Event(ScriptEvents::POST_INSTALL_CMD, $this->composer, $this->io));
+
+        Phake::inOrder(
+            Phake::verify($this->bridgeFactory)->create($this->io),
+            Phake::verify($this->bridge)->install($this->composer)
+        );
+    }
+
+    public function testOnPostUpdateCmd()
+    {
+        $this->plugin->onPostUpdateCmd(new Event(ScriptEvents::POST_UPDATE_CMD, $this->composer, $this->io));
+
+        Phake::inOrder(
+            Phake::verify($this->bridgeFactory)->create($this->io),
+            Phake::verify($this->bridge)->update($this->composer)
         );
     }
 }

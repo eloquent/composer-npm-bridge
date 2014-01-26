@@ -18,7 +18,7 @@ use Composer\Repository\ArrayRepository;
 use PHPUnit_Framework_TestCase;
 use Phake;
 
-class NpmVendorLocatorTest extends PHPUnit_Framework_TestCase
+class NpmVendorFinderTest extends PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
@@ -61,11 +61,6 @@ class NpmVendorLocatorTest extends PHPUnit_Framework_TestCase
 
     public function testFind()
     {
-        $expected = array(
-            $this->packageB,
-            $this->packageD,
-        );
-
-        $this->assertSame($expected, $this->finder->find($this->composer, $this->bridge));
+        $this->assertSame(array($this->packageB, $this->packageD), $this->finder->find($this->composer, $this->bridge));
     }
 }
