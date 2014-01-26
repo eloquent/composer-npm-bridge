@@ -11,6 +11,9 @@
 
 namespace Eloquent\Composer\NpmBridge;
 
+use Composer\Composer;
+use Composer\IO\NullIO;
+use Composer\Script\ScriptEvents;
 use PHPUnit_Framework_TestCase;
 
 class NpmBridgePluginTest extends PHPUnit_Framework_TestCase
@@ -22,8 +25,22 @@ class NpmBridgePluginTest extends PHPUnit_Framework_TestCase
         $this->plugin = new NpmBridgePlugin;
     }
 
-    public function testConstructor()
+    public function testActivate()
     {
-        $this->assertTrue(true);
+        $composer = new Composer;
+        $io = new NullIO;
+
+        $this->assertNull($this->plugin->activate($composer, $io));
+    }
+
+    public function testGetSubscribedEvents()
+    {
+        $this->assertSame(
+            array(
+                ScriptEvents::POST_INSTALL_CMD => 'onPostInstallCmd',
+                ScriptEvents::POST_UPDATE_CMD => 'onPostUpdateCmd',
+            ),
+            $this->plugin->getSubscribedEvents()
+        );
     }
 }
