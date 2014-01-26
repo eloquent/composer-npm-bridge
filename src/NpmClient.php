@@ -22,7 +22,7 @@ class NpmClient implements NpmClientInterface
     /**
      * Construct a new NPM client.
      *
-     * @param ProcessExecutor|null $processExecutor The process executor to use.
+     * @param ProcessExecutor|null  $processExecutor  The process executor to use.
      * @param ExecutableFinder|null $executableFinder The executable finder to use.
      */
     public function __construct(

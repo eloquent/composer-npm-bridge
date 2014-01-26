@@ -24,6 +24,30 @@ use Composer\Script\ScriptEvents;
 class NpmBridgePlugin implements PluginInterface, EventSubscriberInterface
 {
     /**
+     * Construct a new Composer NPM bridge plugin.
+     *
+     * @param NpmVendorLocatorInterface|null $vendorLocator The vendor locator to use.
+     */
+    public function __construct(NpmVendorLocatorInterface $vendorLocator = null)
+    {
+        if (null === $vendorLocator) {
+            $vendorLocator = new NpmVendorLocator;
+        }
+
+        $this->vendorLocator = $vendorLocator;
+    }
+
+    /**
+     * Get the vendor locator.
+     *
+     * @return NpmVendorLocatorInterface The vendor locator.
+     */
+    public function vendorLocator()
+    {
+        return $this->vendorLocator;
+    }
+
+    /**
      * Activate the plugin.
      *
      * @param Composer    $composer The main Composer object.
@@ -53,7 +77,7 @@ class NpmBridgePlugin implements PluginInterface, EventSubscriberInterface
      */
     public function onPostInstallCmd(Event $event)
     {
-        var_dump($event);
+        var_dump($this->vendorLocator()->find($event->getComposer()));
     }
 
     /**
@@ -65,4 +89,6 @@ class NpmBridgePlugin implements PluginInterface, EventSubscriberInterface
     {
         var_dump(__METHOD__, __FUNCTION__);
     }
+
+    private $vendorLocator;
 }
