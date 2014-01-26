@@ -19,30 +19,30 @@ interface NpmClientInterface
     /**
      * Install NPM dependencies for the project at the supplied path.
      *
-     * @param string $path The path to the NPM project.
+     * @param string|null $path The path to the NPM project, or null to use the current working directory.
      *
      * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
      * @throws Exception\NpmCommandFailedException If the operation fails.
      */
-    public function install($path);
+    public function install($path = null);
 
     /**
      * Update NPM dependencies for the project at the supplied path.
      *
-     * @param string $path The path to the NPM project.
+     * @param string|null $path The path to the NPM project, or null to use the current working directory.
      *
      * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
      * @throws Exception\NpmCommandFailedException If the operation fails.
      */
-    public function update($path);
+    public function update($path = null);
 
     /**
      * Shrink-wrap NPM dependencies for the project at the supplied path.
      *
-     * @param string $path The path to the NPM project.
+     * @param string|null $path The path to the NPM project, or null to use the current working directory.
      *
      * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
      * @throws Exception\NpmCommandFailedException If the operation fails.
      */
-    public function shrinkwrap($path);
+    public function shrinkwrap($path = null);
 }

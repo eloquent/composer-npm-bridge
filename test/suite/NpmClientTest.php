@@ -12,6 +12,7 @@
 namespace Eloquent\Composer\NpmBridge;
 
 use Composer\Util\ProcessExecutor;
+use Icecave\Isolator\Isolator;
 use PHPUnit_Framework_TestCase;
 use Phake;
 use Symfony\Component\Process\ExecutableFinder;
@@ -24,9 +25,11 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
 
         $this->processExecutor = Phake::mock('Composer\Util\ProcessExecutor');
         $this->executableFinder = Phake::mock('Symfony\Component\Process\ExecutableFinder');
-        $this->client = new NpmClient($this->processExecutor, $this->executableFinder);
+        $this->isolator = Phake::mock(Isolator::className());
+        $this->client = new NpmClient($this->processExecutor, $this->executableFinder, $this->isolator);
 
         Phake::when($this->executableFinder)->find('npm')->thenReturn('/path/to/npm');
+        Phake::when($this->isolator)->getcwd()->thenReturn('/path/to/cwd');
         Phake::when($this->processExecutor)->execute(Phake::anyParameters())->thenReturn(0);
     }
 
@@ -48,8 +51,18 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
     {
         $this->assertNull($this->client->install('/path/to/project'));
         $this->assertNull($this->client->install('/path/to/project'));
-        Phake::verify($this->executableFinder)->find('npm');
-        Phake::verify($this->processExecutor, Phake::times(2))->execute("'/path/to/npm' 'install'", null, '/path/to/project');
+        $preChdir = Phake::verify($this->isolator, Phake::times(2))->chdir('/path/to/project');
+        $postChdir = Phake::verify($this->isolator, Phake::times(2))->chdir('/path/to/cwd');
+        $install = Phake::verify($this->processExecutor, Phake::times(2))->execute("'/path/to/npm' 'install'");
+        Phake::inOrder(
+            Phake::verify($this->executableFinder)->find('npm'),
+            $preChdir,
+            $install,
+            $postChdir,
+            $preChdir,
+            $install,
+            $postChdir
+        );
     }
 
     public function testInstallFailureNpmNotFound()
@@ -72,8 +85,18 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
     {
         $this->assertNull($this->client->update('/path/to/project'));
         $this->assertNull($this->client->update('/path/to/project'));
-        Phake::verify($this->executableFinder)->find('npm');
-        Phake::verify($this->processExecutor, Phake::times(2))->execute("'/path/to/npm' 'update'", null, '/path/to/project');
+        $preChdir = Phake::verify($this->isolator, Phake::times(2))->chdir('/path/to/project');
+        $postChdir = Phake::verify($this->isolator, Phake::times(2))->chdir('/path/to/cwd');
+        $update = Phake::verify($this->processExecutor, Phake::times(2))->execute("'/path/to/npm' 'update'");
+        Phake::inOrder(
+            Phake::verify($this->executableFinder)->find('npm'),
+            $preChdir,
+            $update,
+            $postChdir,
+            $preChdir,
+            $update,
+            $postChdir
+        );
     }
 
     public function testUpdateFailureNpmNotFound()
@@ -96,8 +119,18 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
     {
         $this->assertNull($this->client->shrinkwrap('/path/to/project'));
         $this->assertNull($this->client->shrinkwrap('/path/to/project'));
-        Phake::verify($this->executableFinder)->find('npm');
-        Phake::verify($this->processExecutor, Phake::times(2))->execute("'/path/to/npm' 'shrinkwrap'", null, '/path/to/project');
+        $preChdir = Phake::verify($this->isolator, Phake::times(2))->chdir('/path/to/project');
+        $postChdir = Phake::verify($this->isolator, Phake::times(2))->chdir('/path/to/cwd');
+        $shrinkwrap = Phake::verify($this->processExecutor, Phake::times(2))->execute("'/path/to/npm' 'shrinkwrap'");
+        Phake::inOrder(
+            Phake::verify($this->executableFinder)->find('npm'),
+            $preChdir,
+            $shrinkwrap,
+            $postChdir,
+            $preChdir,
+            $shrinkwrap,
+            $postChdir
+        );
     }
 
     public function testShrinkwrapFailureNpmNotFound()

@@ -12,7 +12,6 @@
 namespace Eloquent\Composer\NpmBridge;
 
 use Composer\Composer;
-use Composer\Config;
 use Composer\Package\Link;
 use Composer\Package\Package;
 use Composer\Repository\ArrayRepository;
@@ -25,12 +24,12 @@ class NpmVendorLocatorTest extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $this->locator = new NpmVendorLocator;
+        $this->finder = new NpmVendorFinder;
 
         $this->composer = new Composer;
         $this->repositoryManager = Phake::mock('Composer\Repository\RepositoryManager');
         $this->localRepository = new ArrayRepository;
-        $this->config = new Config;
+        $this->bridge = new NpmBridge;
 
         $this->packageA = new Package('vendorA/packageA', '1.0.0.0', '1.0.0');
         $this->packageB = new Package('vendorB/packageB', '1.0.0.0', '1.0.0');
@@ -48,7 +47,6 @@ class NpmVendorLocatorTest extends PHPUnit_Framework_TestCase
 
         $this->composer->setRepositoryManager($this->repositoryManager);
         Phake::when($this->repositoryManager)->getLocalRepository()->thenReturn($this->localRepository);
-        $this->composer->setConfig($this->config);
 
         $this->localRepository->addPackage($this->packageA);
         $this->localRepository->addPackage($this->packageB);
@@ -59,17 +57,15 @@ class NpmVendorLocatorTest extends PHPUnit_Framework_TestCase
         $this->packageB->setRequires(array($this->linkB1, $this->linkB2));
         $this->packageC->setDevRequires(array($this->linkC1, $this->linkC2));
         $this->packageD->setRequires(array($this->linkD1, $this->linkD2));
-
-        $this->config->merge(array('vendor-dir' => 'path/to/vendor'));
     }
 
     public function testFind()
     {
         $expected = array(
-            'vendor/vendorb/packageb',
-            'vendor/vendord/packaged',
+            $this->packageB,
+            $this->packageD,
         );
 
-        $this->assertSame($expected, $this->locator->find($this->composer));
+        $this->assertSame($expected, $this->finder->find($this->composer, $this->bridge));
     }
 }

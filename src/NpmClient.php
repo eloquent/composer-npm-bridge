@@ -12,6 +12,7 @@
 namespace Eloquent\Composer\NpmBridge;
 
 use Composer\Util\ProcessExecutor;
+use Icecave\Isolator\Isolator;
 use Symfony\Component\Process\ExecutableFinder;
 
 /**
@@ -24,10 +25,12 @@ class NpmClient implements NpmClientInterface
      *
      * @param ProcessExecutor|null  $processExecutor  The process executor to use.
      * @param ExecutableFinder|null $executableFinder The executable finder to use.
+     * @param Isolator|null         $isolator         The isolator to use.
      */
     public function __construct(
         ProcessExecutor $processExecutor = null,
-        ExecutableFinder $executableFinder = null
+        ExecutableFinder $executableFinder = null,
+        Isolator $isolator = null
     ) {
         if (null === $processExecutor) {
             $processExecutor = new ProcessExecutor;
@@ -38,6 +41,7 @@ class NpmClient implements NpmClientInterface
 
         $this->processExecutor = $processExecutor;
         $this->executableFinder = $executableFinder;
+        $this->isolator = Isolator::get($isolator);
     }
 
     /**
@@ -63,12 +67,12 @@ class NpmClient implements NpmClientInterface
     /**
      * Install NPM dependencies for the project at the supplied path.
      *
-     * @param string $path The path to the NPM project.
+     * @param string|null $path The path to the NPM project, or null to use the current working directory.
      *
      * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
      * @throws Exception\NpmCommandFailedException If the operation fails.
      */
-    public function install($path)
+    public function install($path = null)
     {
         $this->executeNpm(array('install'), $path);
     }
@@ -76,12 +80,12 @@ class NpmClient implements NpmClientInterface
     /**
      * Update NPM dependencies for the project at the supplied path.
      *
-     * @param string $path The path to the NPM project.
+     * @param string|null $path The path to the NPM project, or null to use the current working directory.
      *
      * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
      * @throws Exception\NpmCommandFailedException If the operation fails.
      */
-    public function update($path)
+    public function update($path = null)
     {
         $this->executeNpm(array('update'), $path);
     }
@@ -89,12 +93,12 @@ class NpmClient implements NpmClientInterface
     /**
      * Shrink-wrap NPM dependencies for the project at the supplied path.
      *
-     * @param string $path The path to the NPM project.
+     * @param string|null $path The path to the NPM project, or null to use the current working directory.
      *
      * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
      * @throws Exception\NpmCommandFailedException If the operation fails.
      */
-    public function shrinkwrap($path)
+    public function shrinkwrap($path = null)
     {
         $this->executeNpm(array('shrinkwrap'), $path);
     }
@@ -115,9 +119,16 @@ class NpmClient implements NpmClientInterface
         array_unshift($arguments, $this->npmPath());
         $command = implode(' ', array_map('escapeshellarg', $arguments));
 
-        $output = null;
-        $exitCode = $this->processExecutor()
-            ->execute($command, $output, $workingDirectoryPath);
+        if (null !== $workingDirectoryPath) {
+            $previousWorkingDirectoryPath = $this->isolator()->getcwd();
+            $this->isolator()->chdir($workingDirectoryPath);
+        }
+
+        $exitCode = $this->processExecutor()->execute($command);
+
+        if (null !== $workingDirectoryPath) {
+            $this->isolator()->chdir($previousWorkingDirectoryPath);
+        }
 
         if (0 !== $exitCode) {
             throw new Exception\NpmCommandFailedException($command);
@@ -142,7 +153,18 @@ class NpmClient implements NpmClientInterface
         return $this->npmPath;
     }
 
+    /**
+     * Get the isolator.
+     *
+     * @return Isolator The isolator.
+     */
+    protected function isolator()
+    {
+        return $this->isolator;
+    }
+
     private $processExecutor;
     private $executableFinder;
+    private $isolator;
     private $npmPath;
 }

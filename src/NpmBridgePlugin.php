@@ -26,25 +26,25 @@ class NpmBridgePlugin implements PluginInterface, EventSubscriberInterface
     /**
      * Construct a new Composer NPM bridge plugin.
      *
-     * @param NpmVendorLocatorInterface|null $vendorLocator The vendor locator to use.
+     * @param NpmBridgeFactoryInterface|null $bridgeFactory The bridge factory to use.
      */
-    public function __construct(NpmVendorLocatorInterface $vendorLocator = null)
+    public function __construct(NpmBridgeFactoryInterface $bridgeFactory = null)
     {
-        if (null === $vendorLocator) {
-            $vendorLocator = new NpmVendorLocator;
+        if (null === $bridgeFactory) {
+            $bridgeFactory = new NpmBridgeFactory;
         }
 
-        $this->vendorLocator = $vendorLocator;
+        $this->bridgeFactory = $bridgeFactory;
     }
 
     /**
-     * Get the vendor locator.
+     * Get the bridge factory.
      *
-     * @return NpmVendorLocatorInterface The vendor locator.
+     * @return NpmBridgeFactoryInterface The bridge factory.
      */
-    public function vendorLocator()
+    public function bridgeFactory()
     {
-        return $this->vendorLocator;
+        return $this->bridgeFactory;
     }
 
     /**
@@ -55,6 +55,7 @@ class NpmBridgePlugin implements PluginInterface, EventSubscriberInterface
      */
     public function activate(Composer $composer, IOInterface $io)
     {
+        // no action required
     }
 
     /**
@@ -74,21 +75,31 @@ class NpmBridgePlugin implements PluginInterface, EventSubscriberInterface
      * Handle post install command events.
      *
      * @param Event $event The event to handle.
+     *
+     * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
+     * @throws Exception\NpmCommandFailedException If the operation fails.
      */
     public function onPostInstallCmd(Event $event)
     {
-        var_dump($this->vendorLocator()->find($event->getComposer()));
+        $this->bridgeFactory()
+            ->create($event->getIO())
+            ->install($event->getComposer());
     }
 
     /**
      * Handle post update command events.
      *
      * @param Event $event The event to handle.
+     *
+     * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
+     * @throws Exception\NpmCommandFailedException If the operation fails.
      */
     public function onPostUpdateCmd(Event $event)
     {
-        var_dump($this->vendorLocator()->find($event->getComposer()));
+        $this->bridgeFactory()
+            ->create($event->getIO())
+            ->update($event->getComposer());
     }
 
-    private $vendorLocator;
+    private $bridgeFactory;
 }
