@@ -21,6 +21,7 @@ interface NpmClientInterface
      *
      * @param string $path The path to the NPM project.
      *
+     * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
      * @throws Exception\NpmCommandFailedException If the operation fails.
      */
     public function install($path);
@@ -30,6 +31,7 @@ interface NpmClientInterface
      *
      * @param string $path The path to the NPM project.
      *
+     * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
      * @throws Exception\NpmCommandFailedException If the operation fails.
      */
     public function update($path);
@@ -39,6 +41,7 @@ interface NpmClientInterface
      *
      * @param string $path The path to the NPM project.
      *
+     * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
      * @throws Exception\NpmCommandFailedException If the operation fails.
      */
     public function shrinkwrap($path);

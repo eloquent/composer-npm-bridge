@@ -26,8 +26,8 @@ class NpmBridgePlugin implements PluginInterface, EventSubscriberInterface
     /**
      * Activate the plugin.
      *
-     * @param Composer $composer The main Composer object.
-     * @param IOInterface $io The i/o interface to use.
+     * @param Composer    $composer The main Composer object.
+     * @param IOInterface $io       The i/o interface to use.
      */
     public function activate(Composer $composer, IOInterface $io)
     {
