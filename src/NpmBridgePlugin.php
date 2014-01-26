@@ -53,7 +53,7 @@ class NpmBridgePlugin implements PluginInterface, EventSubscriberInterface
      */
     public function onPostInstallCmd(Event $event)
     {
-        var_dump(__METHOD__, __FUNCTION__);
+        var_dump($event);
     }
 
     /**
