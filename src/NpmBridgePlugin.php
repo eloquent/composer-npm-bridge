@@ -87,7 +87,7 @@ class NpmBridgePlugin implements PluginInterface, EventSubscriberInterface
      */
     public function onPostUpdateCmd(Event $event)
     {
-        var_dump(__METHOD__, __FUNCTION__);
+        var_dump($this->vendorLocator()->find($event->getComposer()));
     }
 
     private $vendorLocator;
