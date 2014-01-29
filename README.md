@@ -2,56 +2,69 @@
 
 *NPM integration for Composer packages.*
 
-[![Build Status]](http://travis-ci.org/eloquent/composer-npm-bridge)
-[![Test Coverage]](http://eloquent-software.com/composer-npm-bridge/artifacts/tests/coverage/)
+[![The most recent stable version is 2.0.0][version-image]][Semantic versioning]
+[![Current build status image][build-image]][Current build status]
+[![Current coverage status image][coverage-image]][Current coverage status]
 
-## Installation
+## Installation and documentation
 
-Available as [Composer](http://getcomposer.org/) package
-[eloquent/composer-npm-bridge](https://packagist.org/packages/eloquent/composer-npm-bridge).
+* Available as [Composer] package [eloquent/composer-npm-bridge].
+* [API documentation] available.
 
-## What does the Composer NPM bridge do?
+## Requirements
 
-The Composer NPM bridge allows installation and updating of NPM modules via the
-Composer command line interface. This allows Composer packages to bring in NPM
-dependencies in a similar fashion to regular Composer dependencies.
-
-The bridge uses NPM's [shrinkwrap](https://npmjs.org/doc/shrinkwrap.html)
-system to achieve similar functionality to Composer's
-[lock files](http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file).
-
-Currently Composer does not pass events to the handler scripts of dependencies.
-This means that this component is, unfortunately, fairly useless in its current
-incarnation. In the event that Composer changes the way its scripts work, this
-component will be updated and may become more useful.
+* The `npm` executable must be available in PATH
 
 ## Usage
 
-After adding the bridge to the project's Composer dependencies as described in
-the [installation](#installation) section, add the following additional settings
-to `composer.json`:
+To utilize the *Composer NPM bridge*, simply add `eloquent/composer-npm-bridge`
+to the `require` section of the project's Composer configuration:
 
-```json
-{
-    "scripts": {
-        "post-install-cmd": [
-            "Eloquent\\Composer\\NPMBridge\\NPMBridge::handle"
-        ],
-        "post-update-cmd": [
-            "Eloquent\\Composer\\NPMBridge\\NPMBridge::handle"
-        ]
-    }
-}
-```
+    composer require eloquent/composer-npm-bridge:~2
 
-Now, assuming that the NPM `package.json` is set up as required, NPM
-dependencies will be installed and updated alongside the project's Composer
-dependencies.
+NPM dependencies are specified via a [package.json] configuration file in the
+root directory of the Composer package. Source control should be configured to
+ignore NPM's `node_modules` directory, similar to Composer's `vendor` directory.
 
-The install/update process will generate an `npm-shrinkwrap.json` file which
-is similar in purpose to a Composer lock file. This file should be added to the
-source code management repository (Git/Subversion/Mercurial etc.)
+## How does it work?
 
-<!-- references -->
-[Build Status]: https://raw.github.com/eloquent/composer-npm-bridge/gh-pages/artifacts/images/icecave/regular/build-status.png
-[Test Coverage]: https://raw.github.com/eloquent/composer-npm-bridge/gh-pages/artifacts/images/icecave/regular/coverage.png
+The *Composer NPM bridge* is a Composer plugin that automatically installs and
+updates [NPM] packages whenever the corresponding Composer command is executed.
+To detect compatible packages, the bridge inspects Composer package
+configuration information to find packages that directly require the
+`eloquent/composer-npm-bridge` Composer package itself.
+
+In addition to normal operation, `composer install` will [install] NPM
+dependencies for all Composer packages using the bridge. This includes the root
+package, as well as Composer dependencies. Similarly, `composer update` will
+[install] NPM dependencies for all Composer dependencies using the bridge. It
+will also [update] and [shrinkwrap] the NPM dependencies for the root project.
+
+NPM dependencies will be installed exactly as if `npm install` were run from the
+root directory of the package. This applies even if the package is installed as
+a dependency.
+
+## Caveats
+
+Because NPM dependencies are installed underneath the root directory of the
+Composer package, Composer may complain about working copy changes when the
+package is installed as a dependency. Source control should be configured to
+ignore the `node_modules` directory in order to avoid this.
+
+<!-- References -->
+
+[install]: https://npmjs.org/doc/install.html
+[NPM]: https://npmjs.org/
+[package.json]: https://npmjs.org/doc/json.html
+[shrinkwrap]: https://npmjs.org/doc/shrinkwrap.html
+[update]: https://npmjs.org/doc/update.html
+
+[API documentation]: http://lqnt.co/composer-npm-bridge/artifacts/documentation/api/
+[Composer]: http://getcomposer.org/
+[build-image]: http://img.shields.io/travis/eloquent/composer-npm-bridge/develop.svg "Current build status for the develop branch"
+[Current build status]: https://travis-ci.org/eloquent/composer-npm-bridge
+[coverage-image]: http://img.shields.io/coveralls/eloquent/composer-npm-bridge/develop.svg "Current test coverage for the develop branch"
+[Current coverage status]: https://coveralls.io/r/eloquent/composer-npm-bridge
+[eloquent/composer-npm-bridge]: https://packagist.org/packages/eloquent/composer-npm-bridge
+[Semantic versioning]: http://semver.org/
+[version-image]: http://img.shields.io/:semver-2.0.0-brightgreen.svg "This project uses semantic versioning"
