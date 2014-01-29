@@ -15,8 +15,7 @@
     "require": {
         "php": ">=5.3",
         "composer-plugin-api": "1.0.0",
-        "icecave/isolator": "~2",
-        "symfony/process": "~2"
+        "icecave/isolator": "~2"
     },
     "require-dev": {
         "composer/composer": "dev-master@dev",
