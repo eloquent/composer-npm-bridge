@@ -130,4 +130,14 @@ class NpmBridgeTest extends PHPUnit_Framework_TestCase
             Phake::verify($this->io)->write('Nothing to install')
         );
     }
+
+    public function testWillInvokeBridgeWhenItDefinedAsDevDependency()
+    {
+        $this->rootPackage->setDevRequires(array($this->linkRoot3));
+        Phake::when($this->vendorFinder)->find($this->composer, $this->bridge)
+            ->thenReturn(array($this->packageA));
+        $this->bridge->install($this->composer);
+
+        Phake::verify($this->client)->install();
+    }
 }

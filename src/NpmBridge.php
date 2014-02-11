@@ -15,6 +15,7 @@ use Composer\Composer;
 use Composer\IO\IOInterface;
 use Composer\IO\NullIO;
 use Composer\Package\PackageInterface;
+use Composer\Package\RootPackageInterface;
 use Composer\Util\ProcessExecutor;
 
 /**
@@ -139,7 +140,12 @@ class NpmBridge implements NpmBridgeInterface
      */
     public function isDependantPackage(PackageInterface $package)
     {
-        foreach ($package->getRequires() as $link) {
+        $shouldCheckDevPackages = $package instanceof RootPackageInterface;
+
+        foreach (array_merge(
+                     $package->getRequires(),
+                     $shouldCheckDevPackages ? $package->getDevRequires() : array()
+                 ) as $link) {
             if ('eloquent/composer-npm-bridge' === $link->getTarget()) {
                 return true;
             }
