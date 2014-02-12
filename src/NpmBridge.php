@@ -140,12 +140,16 @@ class NpmBridge implements NpmBridgeInterface
      */
     public function isDependantPackage(PackageInterface $package)
     {
-        $shouldCheckDevPackages = $package instanceof RootPackageInterface;
+        if ($package instanceof RootPackageInterface) {
+            $links = array_merge(
+                $package->getRequires(),
+                $package->getDevRequires()
+            );
+        } else {
+            $links = $package->getRequires();
+        }
 
-        foreach (array_merge(
-                     $package->getRequires(),
-                     $shouldCheckDevPackages ? $package->getDevRequires() : array()
-                 ) as $link) {
+        foreach ($links as $link) {
             if ('eloquent/composer-npm-bridge' === $link->getTarget()) {
                 return true;
             }

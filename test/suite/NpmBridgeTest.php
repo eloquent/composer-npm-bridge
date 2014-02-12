@@ -83,6 +83,15 @@ class NpmBridgeTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testInstallDevDependenciesForRootPackage()
+    {
+        $this->rootPackage->setDevRequires(array($this->linkRoot3));
+        Phake::when($this->vendorFinder)->find($this->composer, $this->bridge)->thenReturn(array($this->packageA));
+        $this->bridge->install($this->composer);
+
+        Phake::verify($this->client)->install();
+    }
+
     public function testInstallNothing()
     {
         $this->rootPackage->setRequires(array($this->linkRoot1, $this->linkRoot2));
@@ -129,15 +138,5 @@ class NpmBridgeTest extends PHPUnit_Framework_TestCase
             Phake::verify($this->io)->write('<info>Installing NPM dependencies for Composer dependencies</info>'),
             Phake::verify($this->io)->write('Nothing to install')
         );
-    }
-
-    public function testWillInvokeBridgeWhenItDefinedAsDevDependency()
-    {
-        $this->rootPackage->setDevRequires(array($this->linkRoot3));
-        Phake::when($this->vendorFinder)->find($this->composer, $this->bridge)
-            ->thenReturn(array($this->packageA));
-        $this->bridge->install($this->composer);
-
-        Phake::verify($this->client)->install();
     }
 }
