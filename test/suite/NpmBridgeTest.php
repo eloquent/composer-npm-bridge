@@ -144,6 +144,7 @@ class NpmBridgeTest extends PHPUnit_Framework_TestCase
         Phake::inOrder(
             Phake::verify($this->io)->write('<info>Updating NPM dependencies for root project</info>'),
             Phake::verify($this->client)->update(),
+            Phake::verify($this->client)->install(null, true),
             Phake::verify($this->client)->shrinkwrap(),
             Phake::verify($this->io)->write('<info>Installing NPM dependencies for Composer dependencies</info>'),
             Phake::verify($this->io)->write('<info>Installing NPM dependencies for vendorA/packageA</info>'),
