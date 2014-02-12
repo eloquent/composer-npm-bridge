@@ -2,7 +2,7 @@
 
 *NPM integration for Composer packages.*
 
-[![The most recent stable version is 2.0.0][version-image]][Semantic versioning]
+[![The most recent stable version is 2.1.0][version-image]][Semantic versioning]
 [![Current build status image][build-image]][Current build status]
 [![Current coverage status image][coverage-image]][Current coverage status]
 
@@ -67,4 +67,4 @@ ignore the `node_modules` directory in order to avoid this.
 [Current coverage status]: https://coveralls.io/r/eloquent/composer-npm-bridge
 [eloquent/composer-npm-bridge]: https://packagist.org/packages/eloquent/composer-npm-bridge
 [Semantic versioning]: http://semver.org/
-[version-image]: http://img.shields.io/:semver-2.0.0-brightgreen.svg "This project uses semantic versioning"
+[version-image]: http://img.shields.io/:semver-2.1.0-brightgreen.svg "This project uses semantic versioning"

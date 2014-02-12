@@ -34,7 +34,7 @@ class NpmVendorFinder implements NpmVendorFinderInterface
 
         $dependantPackages = array();
         foreach ($packages as $package) {
-            if ($bridge->isDependantPackage($package)) {
+            if ($bridge->isDependantPackage($package, false)) {
                 $dependantPackages[] = $package;
             }
         }

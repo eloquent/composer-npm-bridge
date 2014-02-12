@@ -1,5 +1,12 @@
 # Composer NPM bridge changelog
 
+## 2.1.0 (2014-02-12)
+
+- **[IMPROVED]** Composer dev/production modes are now honored when installing
+  NPM dependencies
+- **[IMPROVED]** Can now be utilized as a dev-only dependency of the root
+  package
+
 ## 2.0.0 (2014-01-29)
 
 - **[BC BREAK]** Completely re-written as a Composer plugin

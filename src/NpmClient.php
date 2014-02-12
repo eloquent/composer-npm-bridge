@@ -67,14 +67,25 @@ class NpmClient implements NpmClientInterface
     /**
      * Install NPM dependencies for the project at the supplied path.
      *
-     * @param string|null $path The path to the NPM project, or null to use the current working directory.
+     * @param string|null  $path      The path to the NPM project, or null to use the current working directory.
+     * @param boolean|null $isDevMode True if dev dependencies should be included.
      *
      * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
      * @throws Exception\NpmCommandFailedException If the operation fails.
      */
-    public function install($path = null)
+    public function install($path = null, $isDevMode = null)
     {
-        $this->executeNpm(array('install'), $path);
+        if (null === $isDevMode) {
+            $isDevMode = true;
+        }
+
+        if ($isDevMode) {
+            $arguments = array('install');
+        } else {
+            $arguments = array('install', '--production');
+        }
+
+        $this->executeNpm($arguments, $path);
     }
 
     /**

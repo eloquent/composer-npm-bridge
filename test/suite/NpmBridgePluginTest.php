@@ -64,11 +64,21 @@ class NpmBridgePluginTest extends PHPUnit_Framework_TestCase
 
     public function testOnPostInstallCmd()
     {
-        $this->plugin->onPostInstallCmd(new Event(ScriptEvents::POST_INSTALL_CMD, $this->composer, $this->io));
+        $this->plugin->onPostInstallCmd(new Event(ScriptEvents::POST_INSTALL_CMD, $this->composer, $this->io, true));
 
         Phake::inOrder(
             Phake::verify($this->bridgeFactory)->create($this->io),
-            Phake::verify($this->bridge)->install($this->composer)
+            Phake::verify($this->bridge)->install($this->composer, true)
+        );
+    }
+
+    public function testOnPostInstallCmdProductionMode()
+    {
+        $this->plugin->onPostInstallCmd(new Event(ScriptEvents::POST_INSTALL_CMD, $this->composer, $this->io, false));
+
+        Phake::inOrder(
+            Phake::verify($this->bridgeFactory)->create($this->io),
+            Phake::verify($this->bridge)->install($this->composer, false)
         );
     }
 

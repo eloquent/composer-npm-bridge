@@ -22,12 +22,13 @@ interface NpmBridgeInterface
     /**
      * Install NPM dependencies for a Composer project and its dependencies.
      *
-     * @param Composer $composer The main Composer object.
+     * @param Composer     $composer  The main Composer object.
+     * @param boolean|null $isDevMode True if dev mode is enabled.
      *
      * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
      * @throws Exception\NpmCommandFailedException If the operation fails.
      */
-    public function install(Composer $composer);
+    public function install(Composer $composer, $isDevMode = null);
 
     /**
      * Update NPM dependencies for a Composer project and its dependencies.
@@ -46,9 +47,13 @@ interface NpmBridgeInterface
     /**
      * Returns true if the supplied package requires the Composer NPM bridge.
      *
-     * @param PackageInterface $package The package to inspect.
+     * @param PackageInterface $package                The package to inspect.
+     * @param boolean|null     $includeDevDependencies True if the dev dependencies should also be inspected.
      *
      * @return boolean True if the package requires the bridge.
      */
-    public function isDependantPackage(PackageInterface $package);
+    public function isDependantPackage(
+        PackageInterface $package,
+        $includeDevDependencies = null
+    );
 }

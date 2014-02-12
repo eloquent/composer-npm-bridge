@@ -83,7 +83,7 @@ class NpmBridgePlugin implements PluginInterface, EventSubscriberInterface
     {
         $this->bridgeFactory()
             ->create($event->getIO())
-            ->install($event->getComposer());
+            ->install($event->getComposer(), $event->isDevMode());
     }
 
     /**
