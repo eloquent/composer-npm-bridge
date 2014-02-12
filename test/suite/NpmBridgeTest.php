@@ -74,22 +74,49 @@ class NpmBridgeTest extends PHPUnit_Framework_TestCase
 
         Phake::inOrder(
             Phake::verify($this->io)->write('<info>Installing NPM dependencies for root project</info>'),
-            Phake::verify($this->client)->install(),
+            Phake::verify($this->client)->install(null, true),
             Phake::verify($this->io)->write('<info>Installing NPM dependencies for Composer dependencies</info>'),
             Phake::verify($this->io)->write('<info>Installing NPM dependencies for vendorA/packageA</info>'),
-            Phake::verify($this->client)->install('path/to/vendor/vendora/packagea'),
+            Phake::verify($this->client)->install('path/to/vendor/vendora/packagea', false),
             Phake::verify($this->io)->write('<info>Installing NPM dependencies for vendorB/packageB</info>'),
-            Phake::verify($this->client)->install('path/to/vendor/vendorb/packageb')
+            Phake::verify($this->client)->install('path/to/vendor/vendorb/packageb', false)
         );
     }
 
-    public function testInstallDevDependenciesForRootPackage()
+    public function testInstallProductionMode()
+    {
+        $this->rootPackage->setRequires(array($this->linkRoot1, $this->linkRoot2, $this->linkRoot3));
+        Phake::when($this->vendorFinder)->find($this->composer, $this->bridge)
+            ->thenReturn(array($this->packageA, $this->packageB));
+        $this->bridge->install($this->composer, false);
+
+        Phake::inOrder(
+            Phake::verify($this->io)->write('<info>Installing NPM dependencies for root project</info>'),
+            Phake::verify($this->client)->install(null, false),
+            Phake::verify($this->io)->write('<info>Installing NPM dependencies for Composer dependencies</info>'),
+            Phake::verify($this->io)->write('<info>Installing NPM dependencies for vendorA/packageA</info>'),
+            Phake::verify($this->client)->install('path/to/vendor/vendora/packagea', false),
+            Phake::verify($this->io)->write('<info>Installing NPM dependencies for vendorB/packageB</info>'),
+            Phake::verify($this->client)->install('path/to/vendor/vendorb/packageb', false)
+        );
+    }
+
+    public function testInstallRootDevDependenciesInDevMode()
     {
         $this->rootPackage->setDevRequires(array($this->linkRoot3));
-        Phake::when($this->vendorFinder)->find($this->composer, $this->bridge)->thenReturn(array($this->packageA));
-        $this->bridge->install($this->composer);
+        Phake::when($this->vendorFinder)->find($this->composer, $this->bridge)->thenReturn(array());
+        $this->bridge->install($this->composer, true);
 
-        Phake::verify($this->client)->install();
+        Phake::verify($this->client)->install(null, true);
+    }
+
+    public function testInstallRootDevDependenciesInProductionMode()
+    {
+        $this->rootPackage->setDevRequires(array($this->linkRoot3));
+        Phake::when($this->vendorFinder)->find($this->composer, $this->bridge)->thenReturn(array());
+        $this->bridge->install($this->composer, false);
+
+        Phake::verify($this->client, Phake::never())->install(Phake::anyParameters());
     }
 
     public function testInstallNothing()
@@ -120,9 +147,9 @@ class NpmBridgeTest extends PHPUnit_Framework_TestCase
             Phake::verify($this->client)->shrinkwrap(),
             Phake::verify($this->io)->write('<info>Installing NPM dependencies for Composer dependencies</info>'),
             Phake::verify($this->io)->write('<info>Installing NPM dependencies for vendorA/packageA</info>'),
-            Phake::verify($this->client)->install('path/to/vendor/vendora/packagea'),
+            Phake::verify($this->client)->install('path/to/vendor/vendora/packagea', false),
             Phake::verify($this->io)->write('<info>Installing NPM dependencies for vendorB/packageB</info>'),
-            Phake::verify($this->client)->install('path/to/vendor/vendorb/packageb')
+            Phake::verify($this->client)->install('path/to/vendor/vendorb/packageb', false)
         );
     }
 
@@ -138,5 +165,18 @@ class NpmBridgeTest extends PHPUnit_Framework_TestCase
             Phake::verify($this->io)->write('<info>Installing NPM dependencies for Composer dependencies</info>'),
             Phake::verify($this->io)->write('Nothing to install')
         );
+    }
+
+    public function testIsDependantPackage()
+    {
+        $this->packageA->setRequires(array($this->linkRoot3));
+        $this->packageB->setDevRequires(array($this->linkRoot3));
+
+        $this->assertTrue($this->bridge->isDependantPackage($this->packageA));
+        $this->assertFalse($this->bridge->isDependantPackage($this->packageB));
+        $this->assertTrue($this->bridge->isDependantPackage($this->packageA, false));
+        $this->assertFalse($this->bridge->isDependantPackage($this->packageB, false));
+        $this->assertTrue($this->bridge->isDependantPackage($this->packageA, true));
+        $this->assertTrue($this->bridge->isDependantPackage($this->packageB, true));
     }
 }

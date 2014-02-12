@@ -65,6 +65,17 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
         );
     }
 
+    public function testInstallProductionMode()
+    {
+        $this->assertNull($this->client->install('/path/to/project', false));
+        Phake::inOrder(
+            Phake::verify($this->executableFinder)->find('npm'),
+            Phake::verify($this->isolator)->chdir('/path/to/project'),
+            Phake::verify($this->processExecutor)->execute("'/path/to/npm' 'install' '--production'"),
+            Phake::verify($this->isolator)->chdir('/path/to/cwd')
+        );
+    }
+
     public function testInstallFailureNpmNotFound()
     {
         Phake::when($this->executableFinder)->find('npm')->thenReturn(null);
