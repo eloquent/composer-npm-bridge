@@ -186,7 +186,6 @@ class NpmBridge implements NpmBridgeInterface
 
         $packages = $this->vendorFinder()->find($composer, $this);
         if (count($packages) > 0) {
-            $vendorDir = $composer->getConfig()->get('vendor-dir');
 
             foreach ($packages as $package) {
                 $this->io()->write(
