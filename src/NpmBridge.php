@@ -196,7 +196,7 @@ class NpmBridge implements NpmBridgeInterface
                     )
                 );
 
-                $path = $composer-getInstallationManager()
+                $path = $composer->getInstallationManager()
                     ? $composer->getInstallationManager()->getInstallPath($package)
                     : sprintf('%s/%s', $vendorDir, $package->getName())
                 ;
