@@ -186,8 +186,6 @@ class NpmBridge implements NpmBridgeInterface
 
         $packages = $this->vendorFinder()->find($composer, $this);
         if (count($packages) > 0) {
-            $vendorDir = $composer->getConfig()->get('vendor-dir');
-
             foreach ($packages as $package) {
                 $this->io()->write(
                     sprintf(
@@ -197,7 +195,8 @@ class NpmBridge implements NpmBridgeInterface
                 );
 
                 $this->client()->install(
-                    sprintf('%s/%s', $vendorDir, $package->getName()),
+                    $composer->getInstallationManager()
+                        ->getInstallPath($package),
                     false
                 );
             }

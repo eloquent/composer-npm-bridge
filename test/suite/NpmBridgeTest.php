@@ -35,8 +35,6 @@ class NpmBridgeTest extends PHPUnit_Framework_TestCase
         $this->composer = new Composer;
         $this->config = new Config;
 
-        $this->config->merge(array('config' => array('vendor-dir' => 'path/to/vendor')));
-
         $this->rootPackage = new RootPackage('vendor/package', '1.0.0.0', '1.0.0');
         $this->packageA = new Package('vendorA/packageA', '1.0.0.0', '1.0.0');
         $this->packageB = new Package('vendorB/packageB', '1.0.0.0', '1.0.0');
@@ -45,8 +43,12 @@ class NpmBridgeTest extends PHPUnit_Framework_TestCase
         $this->linkRoot2 = new Link('vendor/package', 'vendorY/packageY');
         $this->linkRoot3 = new Link('vendor/package', 'eloquent/composer-npm-bridge');
 
-        $this->composer->setConfig($this->config);
+        $this->installationManager = Phake::mock('Composer\Installer\InstallationManager');
+        Phake::when($this->installationManager)->getInstallPath($this->packageA)->thenReturn('/path/to/install/a');
+        Phake::when($this->installationManager)->getInstallPath($this->packageB)->thenReturn('/path/to/install/b');
+
         $this->composer->setPackage($this->rootPackage);
+        $this->composer->setInstallationManager($this->installationManager);
     }
 
     public function testConstructor()
@@ -77,9 +79,9 @@ class NpmBridgeTest extends PHPUnit_Framework_TestCase
             Phake::verify($this->client)->install(null, true),
             Phake::verify($this->io)->write('<info>Installing NPM dependencies for Composer dependencies</info>'),
             Phake::verify($this->io)->write('<info>Installing NPM dependencies for vendorA/packageA</info>'),
-            Phake::verify($this->client)->install('path/to/vendor/vendora/packagea', false),
+            Phake::verify($this->client)->install('/path/to/install/a', false),
             Phake::verify($this->io)->write('<info>Installing NPM dependencies for vendorB/packageB</info>'),
-            Phake::verify($this->client)->install('path/to/vendor/vendorb/packageb', false)
+            Phake::verify($this->client)->install('/path/to/install/b', false)
         );
     }
 
@@ -95,9 +97,9 @@ class NpmBridgeTest extends PHPUnit_Framework_TestCase
             Phake::verify($this->client)->install(null, false),
             Phake::verify($this->io)->write('<info>Installing NPM dependencies for Composer dependencies</info>'),
             Phake::verify($this->io)->write('<info>Installing NPM dependencies for vendorA/packageA</info>'),
-            Phake::verify($this->client)->install('path/to/vendor/vendora/packagea', false),
+            Phake::verify($this->client)->install('/path/to/install/a', false),
             Phake::verify($this->io)->write('<info>Installing NPM dependencies for vendorB/packageB</info>'),
-            Phake::verify($this->client)->install('path/to/vendor/vendorb/packageb', false)
+            Phake::verify($this->client)->install('/path/to/install/b', false)
         );
     }
 
@@ -148,9 +150,9 @@ class NpmBridgeTest extends PHPUnit_Framework_TestCase
             Phake::verify($this->client)->shrinkwrap(),
             Phake::verify($this->io)->write('<info>Installing NPM dependencies for Composer dependencies</info>'),
             Phake::verify($this->io)->write('<info>Installing NPM dependencies for vendorA/packageA</info>'),
-            Phake::verify($this->client)->install('path/to/vendor/vendora/packagea', false),
+            Phake::verify($this->client)->install('/path/to/install/a', false),
             Phake::verify($this->io)->write('<info>Installing NPM dependencies for vendorB/packageB</info>'),
-            Phake::verify($this->client)->install('path/to/vendor/vendorb/packageb', false)
+            Phake::verify($this->client)->install('/path/to/install/b', false)
         );
     }
 
