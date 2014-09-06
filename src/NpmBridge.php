@@ -197,7 +197,7 @@ class NpmBridge implements NpmBridgeInterface
                 );
 
                 $this->client()->install(
-                    sprintf('%s/%s', $vendorDir, $package->getName()),
+                    $composer->getInstallationManager()->getInstallPath($package),
                     false
                 );
             }
