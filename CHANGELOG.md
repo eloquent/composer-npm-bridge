@@ -1,5 +1,10 @@
 # Composer NPM bridge changelog
 
+## 2.1.1 (2014-09-08)
+
+- **[IMPROVED]** Support for custom installation paths as determined by Composer
+  plugins
+
 ## 2.1.0 (2014-02-12)
 
 - **[IMPROVED]** Composer dev/production modes are now honored when installing
