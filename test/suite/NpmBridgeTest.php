@@ -12,7 +12,6 @@
 namespace Eloquent\Composer\NpmBridge;
 
 use Composer\Composer;
-use Composer\Config;
 use Composer\IO\NullIO;
 use Composer\Package\Link;
 use Composer\Package\Package;
@@ -33,7 +32,6 @@ class NpmBridgeTest extends PHPUnit_Framework_TestCase
         $this->bridge = new NpmBridge($this->io, $this->vendorFinder, $this->client);
 
         $this->composer = new Composer;
-        $this->config = new Config;
 
         $this->rootPackage = new RootPackage('vendor/package', '1.0.0.0', '1.0.0');
         $this->packageA = new Package('vendorA/packageA', '1.0.0.0', '1.0.0');
