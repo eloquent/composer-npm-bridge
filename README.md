@@ -6,6 +6,12 @@
 [![Current build status image][build-image]][Current build status]
 [![Current coverage status image][coverage-image]][Current coverage status]
 
+## CURRENTLY BROKEN
+
+Due to upstream Composer changes, this plugin no longer works as intended (see
+[#8](https://github.com/eloquent/composer-npm-bridge/issues/8)). Pull requests
+are welcome.
+
 ## Installation and documentation
 
 * Available as [Composer] package [eloquent/composer-npm-bridge].
