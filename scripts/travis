@@ -4,7 +4,7 @@ set -e
 
 
 if [[ "$TRAVIS_PHP_VERSION" == "$ARCHER_PUBLISH_VERSION" ]]; then
-    phpdbg -qrr vendor/bin/archer travis:build
+    phpdbg -qrr vendor/bin/archer travis:build --ansi
 else
-    vendor/bin/archer travis:build
+    vendor/bin/archer travis:build --ansi
 fi
