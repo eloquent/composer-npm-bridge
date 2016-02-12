@@ -3,7 +3,7 @@
 /*
  * This file is part of the Composer NPM bridge package.
  *
- * Copyright © 2014 Erin Millard
+ * Copyright © 2016 Erin Millard
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,95 +13,53 @@ namespace Eloquent\Composer\NpmBridge;
 
 use Composer\Composer;
 use Composer\IO\IOInterface;
-use Composer\IO\NullIO;
 use Composer\Package\PackageInterface;
-use Composer\Util\ProcessExecutor;
+use Eloquent\Composer\NpmBridge\Exception\NpmCommandFailedException;
+use Eloquent\Composer\NpmBridge\Exception\NpmNotFoundException;
 
 /**
  * Manages NPM installs, updates, and shrinkwrapping for Composer projects.
  */
-class NpmBridge implements NpmBridgeInterface
+class NpmBridge
 {
     /**
      * Construct a new Composer NPM bridge plugin.
      *
-     * @param IOInterface|null              $io           The i/o interface to use.
-     * @param NpmVendorFinderInterface|null $vendorFinder The vendor finder to use.
-     * @param NpmClientInterface|null       $client       The NPM client to use.
+     * @access private
+     *
+     * @param IOInterface     $io           The i/o interface to use.
+     * @param NpmVendorFinder $vendorFinder The vendor finder to use.
+     * @param NpmClient       $client       The NPM client to use.
      */
     public function __construct(
-        IOInterface $io = null,
-        NpmVendorFinderInterface $vendorFinder = null,
-        NpmClientInterface $client = null
+        IOInterface $io,
+        NpmVendorFinder $vendorFinder,
+        NpmClient $client
     ) {
-        if (null === $io) {
-            $io = new NullIO;
-        }
-        if (null === $vendorFinder) {
-            $vendorFinder = new NpmVendorFinder;
-        }
-        if (null === $client) {
-            $client = new NpmClient(new ProcessExecutor($io));
-        }
-
         $this->io = $io;
         $this->vendorFinder = $vendorFinder;
         $this->client = $client;
     }
 
     /**
-     * Get the i/o interface.
-     *
-     * @return IOInterface The i/o interface.
-     */
-    public function io()
-    {
-        return $this->io;
-    }
-
-    /**
-     * Get the vendor finder.
-     *
-     * @return NpmVendorFinderInterface The vendor finder.
-     */
-    public function vendorFinder()
-    {
-        return $this->vendorFinder;
-    }
-
-    /**
-     * Get the NPM client.
-     *
-     * @return NpmClientInterface The NPM client.
-     */
-    public function client()
-    {
-        return $this->client;
-    }
-
-    /**
      * Install NPM dependencies for a Composer project and its dependencies.
      *
-     * @param Composer     $composer  The main Composer object.
-     * @param boolean|null $isDevMode True if dev mode is enabled.
+     * @param Composer $composer  The main Composer object.
+     * @param boolean  $isDevMode True if dev mode is enabled.
      *
-     * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
-     * @throws Exception\NpmCommandFailedException If the operation fails.
+     * @throws NpmNotFoundException      If the npm executable cannot be located.
+     * @throws NpmCommandFailedException If the operation fails.
      */
-    public function install(Composer $composer, $isDevMode = null)
+    public function install(Composer $composer, $isDevMode = true)
     {
-        if (null === $isDevMode) {
-            $isDevMode = true;
-        }
-
-        $this->io()->write(
+        $this->io->write(
             '<info>Installing NPM dependencies for root project</info>'
         );
 
         if ($this->isDependantPackage($composer->getPackage(), $isDevMode)) {
-            $this->client()->install(null, $isDevMode);
+            $this->client->install(null, $isDevMode);
         } else {
-            $this->io()->write('Nothing to install');
+            $this->io->write('Nothing to install');
         }
 
         $this->installForVendors($composer);
@@ -116,21 +74,21 @@ class NpmBridge implements NpmBridgeInterface
      *
      * @param Composer $composer The main Composer object.
      *
-     * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
-     * @throws Exception\NpmCommandFailedException If the operation fails.
+     * @throws NpmNotFoundException      If the npm executable cannot be located.
+     * @throws NpmCommandFailedException If the operation fails.
      */
     public function update(Composer $composer)
     {
-        $this->io()->write(
+        $this->io->write(
             '<info>Updating NPM dependencies for root project</info>'
         );
 
         if ($this->isDependantPackage($composer->getPackage(), true)) {
-            $this->client()->update();
-            $this->client()->install(null, true);
-            $this->client()->shrinkwrap();
+            $this->client->update();
+            $this->client->install(null, true);
+            $this->client->shrinkwrap();
         } else {
-            $this->io()->write('Nothing to update');
+            $this->io->write('Nothing to update');
         }
 
         $this->installForVendors($composer);
@@ -140,18 +98,14 @@ class NpmBridge implements NpmBridgeInterface
      * Returns true if the supplied package requires the Composer NPM bridge.
      *
      * @param PackageInterface $package                The package to inspect.
-     * @param boolean|null     $includeDevDependencies True if the dev dependencies should also be inspected.
+     * @param boolean          $includeDevDependencies True if the dev dependencies should also be inspected.
      *
      * @return boolean True if the package requires the bridge.
      */
     public function isDependantPackage(
         PackageInterface $package,
-        $includeDevDependencies = null
+        $includeDevDependencies = false
     ) {
-        if (null === $includeDevDependencies) {
-            $includeDevDependencies = false;
-        }
-
         foreach ($package->getRequires() as $link) {
             if ('eloquent/composer-npm-bridge' === $link->getTarget()) {
                 return true;
@@ -169,39 +123,31 @@ class NpmBridge implements NpmBridgeInterface
         return false;
     }
 
-    /**
-     * Install NPM dependencies for all Composer dependencies that use the
-     * bridge.
-     *
-     * @param Composer $composer The main Composer object.
-     *
-     * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
-     * @throws Exception\NpmCommandFailedException If the operation fails.
-     */
-    protected function installForVendors(Composer $composer)
+    private function installForVendors($composer)
     {
-        $this->io()->write(
+        $this->io->write(
             '<info>Installing NPM dependencies for Composer dependencies</info>'
         );
 
-        $packages = $this->vendorFinder()->find($composer, $this);
+        $packages = $this->vendorFinder->find($composer, $this);
+
         if (count($packages) > 0) {
             foreach ($packages as $package) {
-                $this->io()->write(
+                $this->io->write(
                     sprintf(
                         '<info>Installing NPM dependencies for %s</info>',
                         $package->getPrettyName()
                     )
                 );
 
-                $this->client()->install(
+                $this->client->install(
                     $composer->getInstallationManager()
                         ->getInstallPath($package),
                     false
                 );
             }
         } else {
-            $this->io()->write('Nothing to install');
+            $this->io->write('Nothing to install');
         }
     }
 

@@ -3,7 +3,7 @@
 /*
  * This file is part of the Composer NPM bridge package.
  *
- * Copyright © 2014 Erin Millard
+ * Copyright © 2016 Erin Millard
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,35 +15,26 @@ use Composer\Composer;
 use Composer\IO\NullIO;
 use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
+use Eloquent\Phony\Phpunit\Phony;
 use PHPUnit_Framework_TestCase;
-use Phake;
 
 class NpmBridgePluginTest extends PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        parent::setUp();
+        $this->bridgeFactory = Phony::mock('Eloquent\Composer\NpmBridge\NpmBridgeFactory');
+        $this->plugin = new NpmBridgePlugin($this->bridgeFactory->mock());
 
-        $this->bridgeFactory = Phake::mock('Eloquent\Composer\NpmBridge\NpmBridgeFactoryInterface');
-        $this->plugin = new NpmBridgePlugin($this->bridgeFactory);
+        $this->bridge = Phony::mock('Eloquent\Composer\NpmBridge\NpmBridge');
+        $this->composer = new Composer();
+        $this->io = new NullIO();
 
-        $this->bridge = Phake::mock('Eloquent\Composer\NpmBridge\NpmBridgeInterface');
-        $this->composer = new Composer;
-        $this->io = new NullIO;
-
-        Phake::when($this->bridgeFactory)->create(Phake::anyParameters())->thenReturn($this->bridge);
+        $this->bridgeFactory->createBridge('*')->returns($this->bridge);
     }
 
-    public function testConstructor()
+    public function testConstructorWithoutArguments()
     {
-        $this->assertSame($this->bridgeFactory, $this->plugin->bridgeFactory());
-    }
-
-    public function testConstructorDefaults()
-    {
-        $this->plugin = new NpmBridgePlugin;
-
-        $this->assertEquals(new NpmBridgeFactory, $this->plugin->bridgeFactory());
+        $this->assertInstanceOf('Eloquent\Composer\NpmBridge\NpmBridgePlugin', new NpmBridgePlugin());
     }
 
     public function testActivate()
@@ -66,9 +57,9 @@ class NpmBridgePluginTest extends PHPUnit_Framework_TestCase
     {
         $this->plugin->onPostInstallCmd(new Event(ScriptEvents::POST_INSTALL_CMD, $this->composer, $this->io, true));
 
-        Phake::inOrder(
-            Phake::verify($this->bridgeFactory)->create($this->io),
-            Phake::verify($this->bridge)->install($this->composer, true)
+        Phony::inOrder(
+            $this->bridgeFactory->createBridge->calledWith($this->io),
+            $this->bridge->install->calledWith($this->composer, true)
         );
     }
 
@@ -76,9 +67,9 @@ class NpmBridgePluginTest extends PHPUnit_Framework_TestCase
     {
         $this->plugin->onPostInstallCmd(new Event(ScriptEvents::POST_INSTALL_CMD, $this->composer, $this->io, false));
 
-        Phake::inOrder(
-            Phake::verify($this->bridgeFactory)->create($this->io),
-            Phake::verify($this->bridge)->install($this->composer, false)
+        Phony::inOrder(
+            $this->bridgeFactory->createBridge->calledWith($this->io),
+            $this->bridge->install->calledWith($this->composer, false)
         );
     }
 
@@ -86,9 +77,9 @@ class NpmBridgePluginTest extends PHPUnit_Framework_TestCase
     {
         $this->plugin->onPostUpdateCmd(new Event(ScriptEvents::POST_UPDATE_CMD, $this->composer, $this->io));
 
-        Phake::inOrder(
-            Phake::verify($this->bridgeFactory)->create($this->io),
-            Phake::verify($this->bridge)->update($this->composer)
+        Phony::inOrder(
+            $this->bridgeFactory->createBridge->calledWith($this->io),
+            $this->bridge->update->calledWith($this->composer)
         );
     }
 }

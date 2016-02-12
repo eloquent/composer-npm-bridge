@@ -14,12 +14,14 @@
     "type": "composer-plugin",
     "require": {
         "php": ">=5.3",
-        "composer-plugin-api": "1.0.0",
-        "icecave/isolator": "~2"
+        "composer-plugin-api": "^1",
+        "icecave/isolator": "^2|^3"
     },
     "require-dev": {
-        "composer/composer": "dev-master@dev",
-        "icecave/archer": "~1"
+        "composer/composer": "dev-master",
+        "eloquent/phony": "^0.8",
+        "icecave/archer": "dev-develop",
+        "phpunit/phpunit": "^4"
     },
     "autoload": {
         "psr-4": {

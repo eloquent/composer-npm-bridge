@@ -3,7 +3,7 @@
 /*
  * This file is part of the Composer NPM bridge package.
  *
- * Copyright © 2014 Erin Millard
+ * Copyright © 2016 Erin Millard
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -12,24 +12,24 @@
 namespace Eloquent\Composer\NpmBridge;
 
 use Composer\Composer;
+use Composer\IO\NullIO;
 use Composer\Package\Link;
 use Composer\Package\Package;
 use Composer\Repository\ArrayRepository;
+use Eloquent\Phony\Phpunit\Phony;
 use PHPUnit_Framework_TestCase;
-use Phake;
 
 class NpmVendorFinderTest extends PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        parent::setUp();
+        $this->finder = new NpmVendorFinder();
 
-        $this->finder = new NpmVendorFinder;
+        $this->composer = new Composer();
+        $this->repositoryManager = Phony::mock('Composer\Repository\RepositoryManager');
+        $this->localRepository = new ArrayRepository();
 
-        $this->composer = new Composer;
-        $this->repositoryManager = Phake::mock('Composer\Repository\RepositoryManager');
-        $this->localRepository = new ArrayRepository;
-        $this->bridge = new NpmBridge;
+        $this->bridge = NpmBridgeFactory::create()->createBridge(new NullIO());
 
         $this->packageA = new Package('vendorA/packageA', '1.0.0.0', '1.0.0');
         $this->packageB = new Package('vendorB/packageB', '1.0.0.0', '1.0.0');
@@ -45,8 +45,8 @@ class NpmVendorFinderTest extends PHPUnit_Framework_TestCase
         $this->linkD1 = new Link('vendorD/packageD', 'eloquent/composer-npm-bridge');
         $this->linkD2 = new Link('vendorD/packageD', 'vendorZ/packageZ');
 
-        $this->composer->setRepositoryManager($this->repositoryManager);
-        Phake::when($this->repositoryManager)->getLocalRepository()->thenReturn($this->localRepository);
+        $this->composer->setRepositoryManager($this->repositoryManager->mock());
+        $this->repositoryManager->getLocalRepository->returns($this->localRepository);
 
         $this->localRepository->addPackage($this->packageA);
         $this->localRepository->addPackage($this->packageB);
