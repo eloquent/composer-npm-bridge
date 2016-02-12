@@ -21,8 +21,6 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        parent::setUp();
-
         $this->processExecutor = Phony::mock('Composer\Util\ProcessExecutor');
         $this->executableFinder = Phony::mock('Symfony\Component\Process\ExecutableFinder');
         $this->isolator = Phony::mock(Isolator::className());
@@ -32,20 +30,6 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
         $this->executableFinder->find('npm')->returns('/path/to/npm');
         $this->isolator->getcwd()->returns('/path/to/cwd');
         $this->processExecutor->execute('*')->returns(0);
-    }
-
-    public function testConstructor()
-    {
-        $this->assertSame($this->processExecutor->mock(), $this->client->processExecutor());
-        $this->assertSame($this->executableFinder->mock(), $this->client->executableFinder());
-    }
-
-    public function testConstructorDefaults()
-    {
-        $this->client = new NpmClient();
-
-        $this->assertEquals(new ProcessExecutor(), $this->client->processExecutor());
-        $this->assertEquals(new ExecutableFinder(), $this->client->executableFinder());
     }
 
     public function testInstall()

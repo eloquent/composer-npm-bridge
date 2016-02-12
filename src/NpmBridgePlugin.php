@@ -17,6 +17,7 @@ use Composer\IO\IOInterface;
 use Composer\Plugin\PluginInterface;
 use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
+use Eloquent\Composer\NpmBridge\Exception\NpmCommandFailedException;
 
 /**
  * A Composer plugin to facilitate NPM integration.
@@ -26,25 +27,15 @@ class NpmBridgePlugin implements PluginInterface, EventSubscriberInterface
     /**
      * Construct a new Composer NPM bridge plugin.
      *
-     * @param NpmBridgeFactoryInterface|null $bridgeFactory The bridge factory to use.
+     * @param NpmBridgeFactory|null $bridgeFactory The bridge factory to use.
      */
-    public function __construct(NpmBridgeFactoryInterface $bridgeFactory = null)
+    public function __construct(NpmBridgeFactory $bridgeFactory = null)
     {
         if (null === $bridgeFactory) {
-            $bridgeFactory = new NpmBridgeFactory();
+            $bridgeFactory = NpmBridgeFactory::create();
         }
 
         $this->bridgeFactory = $bridgeFactory;
-    }
-
-    /**
-     * Get the bridge factory.
-     *
-     * @return NpmBridgeFactoryInterface The bridge factory.
-     */
-    public function bridgeFactory()
-    {
-        return $this->bridgeFactory;
     }
 
     /**
@@ -76,13 +67,12 @@ class NpmBridgePlugin implements PluginInterface, EventSubscriberInterface
      *
      * @param Event $event The event to handle.
      *
-     * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
-     * @throws Exception\NpmCommandFailedException If the operation fails.
+     * @throws NpmNotFoundException      If the npm executable cannot be located.
+     * @throws NpmCommandFailedException If the operation fails.
      */
     public function onPostInstallCmd(Event $event)
     {
-        $this->bridgeFactory()
-            ->create($event->getIO())
+        $this->bridgeFactory->createBridge($event->getIO())
             ->install($event->getComposer(), $event->isDevMode());
     }
 
@@ -91,13 +81,12 @@ class NpmBridgePlugin implements PluginInterface, EventSubscriberInterface
      *
      * @param Event $event The event to handle.
      *
-     * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
-     * @throws Exception\NpmCommandFailedException If the operation fails.
+     * @throws NpmNotFoundException      If the npm executable cannot be located.
+     * @throws NpmCommandFailedException If the operation fails.
      */
     public function onPostUpdateCmd(Event $event)
     {
-        $this->bridgeFactory()
-            ->create($event->getIO())
+        $this->bridgeFactory->createBridge($event->getIO())
             ->update($event->getComposer());
     }
 

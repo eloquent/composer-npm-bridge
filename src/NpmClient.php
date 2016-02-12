@@ -12,56 +12,47 @@
 namespace Eloquent\Composer\NpmBridge;
 
 use Composer\Util\ProcessExecutor;
+use Eloquent\Composer\NpmBridge\Exception\NpmCommandFailedException;
+use Eloquent\Composer\NpmBridge\Exception\NpmNotFoundException;
 use Icecave\Isolator\Isolator;
 use Symfony\Component\Process\ExecutableFinder;
 
 /**
  * A simple client for performing NPM operations.
  */
-class NpmClient implements NpmClientInterface
+class NpmClient
 {
+    /**
+     * Create a new NPM client.
+     *
+     * @return self The newly created client.
+     */
+    public static function create()
+    {
+        return new self(
+            new ProcessExecutor(),
+            new ExecutableFinder(),
+            Isolator::get()
+        );
+    }
+
     /**
      * Construct a new NPM client.
      *
-     * @param ProcessExecutor|null  $processExecutor  The process executor to use.
-     * @param ExecutableFinder|null $executableFinder The executable finder to use.
-     * @param Isolator|null         $isolator         The isolator to use.
+     * @access private
+     *
+     * @param ProcessExecutor  $processExecutor  The process executor to use.
+     * @param ExecutableFinder $executableFinder The executable finder to use.
+     * @param Isolator         $isolator         The isolator to use.
      */
     public function __construct(
-        ProcessExecutor $processExecutor = null,
-        ExecutableFinder $executableFinder = null,
-        Isolator $isolator = null
+        ProcessExecutor $processExecutor,
+        ExecutableFinder $executableFinder,
+        Isolator $isolator
     ) {
-        if (null === $processExecutor) {
-            $processExecutor = new ProcessExecutor();
-        }
-        if (null === $executableFinder) {
-            $executableFinder = new ExecutableFinder();
-        }
-
         $this->processExecutor = $processExecutor;
         $this->executableFinder = $executableFinder;
-        $this->isolator = Isolator::get($isolator);
-    }
-
-    /**
-     * Get the process executor.
-     *
-     * @return ProcessExecutor The process executor.
-     */
-    public function processExecutor()
-    {
-        return $this->processExecutor;
-    }
-
-    /**
-     * Get the executable finder.
-     *
-     * @return ExecutableFinder The executable finder.
-     */
-    public function executableFinder()
-    {
-        return $this->executableFinder;
+        $this->isolator = $isolator;
     }
 
     /**
@@ -70,8 +61,8 @@ class NpmClient implements NpmClientInterface
      * @param string|null  $path      The path to the NPM project, or null to use the current working directory.
      * @param boolean|null $isDevMode True if dev dependencies should be included.
      *
-     * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
-     * @throws Exception\NpmCommandFailedException If the operation fails.
+     * @throws NpmNotFoundException      If the npm executable cannot be located.
+     * @throws NpmCommandFailedException If the operation fails.
      */
     public function install($path = null, $isDevMode = null)
     {
@@ -93,8 +84,8 @@ class NpmClient implements NpmClientInterface
      *
      * @param string|null $path The path to the NPM project, or null to use the current working directory.
      *
-     * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
-     * @throws Exception\NpmCommandFailedException If the operation fails.
+     * @throws NpmNotFoundException      If the npm executable cannot be located.
+     * @throws NpmCommandFailedException If the operation fails.
      */
     public function update($path = null)
     {
@@ -106,72 +97,46 @@ class NpmClient implements NpmClientInterface
      *
      * @param string|null $path The path to the NPM project, or null to use the current working directory.
      *
-     * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
-     * @throws Exception\NpmCommandFailedException If the operation fails.
+     * @throws NpmNotFoundException      If the npm executable cannot be located.
+     * @throws NpmCommandFailedException If the operation fails.
      */
     public function shrinkwrap($path = null)
     {
         $this->executeNpm(array('shrinkwrap'), $path);
     }
 
-    /**
-     * Execute an NPM command.
-     *
-     * @param array<integer,string> $arguments            The arguments to pass to the npm executable.
-     * @param string|null           $workingDirectoryPath The path to the working directory, or null to use the current working directory.
-     *
-     * @throws Exception\NpmNotFoundException      If the npm executable cannot be located.
-     * @throws Exception\NpmCommandFailedException If the operation fails.
-     */
-    protected function executeNpm(
-        array $arguments,
-        $workingDirectoryPath = null
-    ) {
+    private function executeNpm($arguments, $workingDirectoryPath)
+    {
         array_unshift($arguments, $this->npmPath());
         $command = implode(' ', array_map('escapeshellarg', $arguments));
 
         if (null !== $workingDirectoryPath) {
-            $previousWorkingDirectoryPath = $this->isolator()->getcwd();
-            $this->isolator()->chdir($workingDirectoryPath);
+            $previousWorkingDirectoryPath = $this->isolator->getcwd();
+            $this->isolator->chdir($workingDirectoryPath);
         }
 
-        $exitCode = $this->processExecutor()->execute($command);
+        $exitCode = $this->processExecutor->execute($command);
 
         if (null !== $workingDirectoryPath) {
-            $this->isolator()->chdir($previousWorkingDirectoryPath);
+            $this->isolator->chdir($previousWorkingDirectoryPath);
         }
 
         if (0 !== $exitCode) {
-            throw new Exception\NpmCommandFailedException($command);
+            throw new NpmCommandFailedException($command);
         }
     }
 
-    /**
-     * Get the npm exectable path.
-     *
-     * @return string                         The path to the npm executable.
-     * @throws Exception\NpmNotFoundException If the npm executable cannot be located.
-     */
-    protected function npmPath()
+    private function npmPath()
     {
         if (null === $this->npmPath) {
-            $this->npmPath = $this->executableFinder()->find('npm');
+            $this->npmPath = $this->executableFinder->find('npm');
+
             if (null === $this->npmPath) {
-                throw new Exception\NpmNotFoundException();
+                throw new NpmNotFoundException();
             }
         }
 
         return $this->npmPath;
-    }
-
-    /**
-     * Get the isolator.
-     *
-     * @return Isolator The isolator.
-     */
-    protected function isolator()
-    {
-        return $this->isolator;
     }
 
     private $processExecutor;

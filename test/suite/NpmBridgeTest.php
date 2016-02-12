@@ -12,11 +12,9 @@
 namespace Eloquent\Composer\NpmBridge;
 
 use Composer\Composer;
-use Composer\IO\NullIO;
 use Composer\Package\Link;
 use Composer\Package\Package;
 use Composer\Package\RootPackage;
-use Composer\Util\ProcessExecutor;
 use Eloquent\Phony\Phpunit\Phony;
 use PHPUnit_Framework_TestCase;
 
@@ -24,11 +22,9 @@ class NpmBridgeTest extends PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        parent::setUp();
-
         $this->io = Phony::mock('Composer\IO\IOInterface');
-        $this->vendorFinder = Phony::mock('Eloquent\Composer\NpmBridge\NpmVendorFinderInterface');
-        $this->client = Phony::mock('Eloquent\Composer\NpmBridge\NpmClientInterface');
+        $this->vendorFinder = Phony::mock('Eloquent\Composer\NpmBridge\NpmVendorFinder');
+        $this->client = Phony::mock('Eloquent\Composer\NpmBridge\NpmClient');
         $this->bridge = new NpmBridge($this->io->mock(), $this->vendorFinder->mock(), $this->client->mock());
 
         $this->composer = new Composer();
@@ -47,22 +43,6 @@ class NpmBridgeTest extends PHPUnit_Framework_TestCase
 
         $this->composer->setPackage($this->rootPackage);
         $this->composer->setInstallationManager($this->installationManager->mock());
-    }
-
-    public function testConstructor()
-    {
-        $this->assertSame($this->io->mock(), $this->bridge->io());
-        $this->assertSame($this->vendorFinder->mock(), $this->bridge->vendorFinder());
-        $this->assertSame($this->client->mock(), $this->bridge->client());
-    }
-
-    public function testConstructorDefaults()
-    {
-        $this->bridge = new NpmBridge();
-
-        $this->assertEquals(new NullIO(), $this->bridge->io());
-        $this->assertEquals(new NpmVendorFinder(), $this->bridge->vendorFinder());
-        $this->assertEquals(new NpmClient(new ProcessExecutor(new NullIO())), $this->bridge->client());
     }
 
     public function testInstall()

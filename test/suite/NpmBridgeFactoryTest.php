@@ -18,19 +18,15 @@ class NpmBridgeFactoryTest extends PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        parent::setUp();
-
-        $this->factory = new NpmBridgeFactory();
+        $this->factory = NpmBridgeFactory::create();
 
         $this->io = new NullIO();
-        $this->vendorFinder = new NpmVendorFinder();
-        $this->client = new NpmClient();
     }
 
-    public function testCreate()
+    public function testCreateBridge()
     {
-        $expected = new NpmBridge($this->io, $this->vendorFinder, $this->client);
+        $expected = new NpmBridge($this->io, new NpmVendorFinder(), NpmClient::create());
 
-        $this->assertEquals($expected, $this->factory->create($this->io, $this->vendorFinder, $this->client));
+        $this->assertEquals($expected, $this->factory->createBridge($this->io));
     }
 }

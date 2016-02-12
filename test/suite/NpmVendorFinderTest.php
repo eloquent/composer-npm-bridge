@@ -12,6 +12,7 @@
 namespace Eloquent\Composer\NpmBridge;
 
 use Composer\Composer;
+use Composer\IO\NullIO;
 use Composer\Package\Link;
 use Composer\Package\Package;
 use Composer\Repository\ArrayRepository;
@@ -22,14 +23,13 @@ class NpmVendorFinderTest extends PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        parent::setUp();
-
         $this->finder = new NpmVendorFinder();
 
         $this->composer = new Composer();
         $this->repositoryManager = Phony::mock('Composer\Repository\RepositoryManager');
         $this->localRepository = new ArrayRepository();
-        $this->bridge = new NpmBridge();
+
+        $this->bridge = NpmBridgeFactory::create()->createBridge(new NullIO());
 
         $this->packageA = new Package('vendorA/packageA', '1.0.0.0', '1.0.0');
         $this->packageB = new Package('vendorB/packageB', '1.0.0.0', '1.0.0');

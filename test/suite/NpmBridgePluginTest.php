@@ -22,28 +22,19 @@ class NpmBridgePluginTest extends PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        parent::setUp();
-
-        $this->bridgeFactory = Phony::mock('Eloquent\Composer\NpmBridge\NpmBridgeFactoryInterface');
+        $this->bridgeFactory = Phony::mock('Eloquent\Composer\NpmBridge\NpmBridgeFactory');
         $this->plugin = new NpmBridgePlugin($this->bridgeFactory->mock());
 
-        $this->bridge = Phony::mock('Eloquent\Composer\NpmBridge\NpmBridgeInterface');
+        $this->bridge = Phony::mock('Eloquent\Composer\NpmBridge\NpmBridge');
         $this->composer = new Composer();
         $this->io = new NullIO();
 
-        $this->bridgeFactory->create('*')->returns($this->bridge);
+        $this->bridgeFactory->createBridge('*')->returns($this->bridge);
     }
 
-    public function testConstructor()
+    public function testConstructorWithoutArguments()
     {
-        $this->assertSame($this->bridgeFactory->mock(), $this->plugin->bridgeFactory());
-    }
-
-    public function testConstructorDefaults()
-    {
-        $this->plugin = new NpmBridgePlugin();
-
-        $this->assertEquals(new NpmBridgeFactory(), $this->plugin->bridgeFactory());
+        $this->assertInstanceOf('Eloquent\Composer\NpmBridge\NpmBridgePlugin', new NpmBridgePlugin());
     }
 
     public function testActivate()
@@ -67,7 +58,7 @@ class NpmBridgePluginTest extends PHPUnit_Framework_TestCase
         $this->plugin->onPostInstallCmd(new Event(ScriptEvents::POST_INSTALL_CMD, $this->composer, $this->io, true));
 
         Phony::inOrder(
-            $this->bridgeFactory->create->calledWith($this->io),
+            $this->bridgeFactory->createBridge->calledWith($this->io),
             $this->bridge->install->calledWith($this->composer, true)
         );
     }
@@ -77,7 +68,7 @@ class NpmBridgePluginTest extends PHPUnit_Framework_TestCase
         $this->plugin->onPostInstallCmd(new Event(ScriptEvents::POST_INSTALL_CMD, $this->composer, $this->io, false));
 
         Phony::inOrder(
-            $this->bridgeFactory->create->calledWith($this->io),
+            $this->bridgeFactory->createBridge->calledWith($this->io),
             $this->bridge->install->calledWith($this->composer, false)
         );
     }
@@ -87,7 +78,7 @@ class NpmBridgePluginTest extends PHPUnit_Framework_TestCase
         $this->plugin->onPostUpdateCmd(new Event(ScriptEvents::POST_UPDATE_CMD, $this->composer, $this->io));
 
         Phony::inOrder(
-            $this->bridgeFactory->create->calledWith($this->io),
+            $this->bridgeFactory->createBridge->calledWith($this->io),
             $this->bridge->update->calledWith($this->composer)
         );
     }
