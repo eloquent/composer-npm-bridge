@@ -13,12 +13,6 @@
 [current version]: https://packagist.org/packages/eloquent/composer-npm-bridge
 [version-image]: https://img.shields.io/packagist/v/eloquent/composer-npm-bridge.svg?style=flat-square "This project uses semantic versioning"
 
-## CURRENTLY BROKEN
-
-Due to upstream Composer changes, this plugin no longer works as intended (see
-[#8](https://github.com/eloquent/composer-npm-bridge/issues/8)). Pull requests
-are welcome.
-
 ## Installation and documentation
 
 * Available as [Composer] package [eloquent/composer-npm-bridge].
