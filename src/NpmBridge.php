@@ -35,10 +35,10 @@ class NpmBridge implements NpmBridgeInterface
         NpmClientInterface $client = null
     ) {
         if (null === $io) {
-            $io = new NullIO;
+            $io = new NullIO();
         }
         if (null === $vendorFinder) {
-            $vendorFinder = new NpmVendorFinder;
+            $vendorFinder = new NpmVendorFinder();
         }
         if (null === $client) {
             $client = new NpmClient(new ProcessExecutor($io));

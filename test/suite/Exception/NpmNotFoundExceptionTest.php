@@ -18,7 +18,7 @@ class NpmNotFoundExceptionTest extends PHPUnit_Framework_TestCase
 {
     public function testException()
     {
-        $cause = new Exception;
+        $cause = new Exception();
         $exception = new NpmNotFoundException($cause);
 
         $this->assertSame('The npm executable could not be found.', $exception->getMessage());

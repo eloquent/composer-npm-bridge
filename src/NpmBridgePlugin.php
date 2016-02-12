@@ -31,7 +31,7 @@ class NpmBridgePlugin implements PluginInterface, EventSubscriberInterface
     public function __construct(NpmBridgeFactoryInterface $bridgeFactory = null)
     {
         if (null === $bridgeFactory) {
-            $bridgeFactory = new NpmBridgeFactory;
+            $bridgeFactory = new NpmBridgeFactory();
         }
 
         $this->bridgeFactory = $bridgeFactory;

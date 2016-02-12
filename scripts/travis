@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -e
+
+
+if [[ "$TRAVIS_PHP_VERSION" == "$ARCHER_PUBLISH_VERSION" ]]; then
+    phpdbg -qrr vendor/bin/archer travis:build
+else
+    vendor/bin/archer travis:build
+fi

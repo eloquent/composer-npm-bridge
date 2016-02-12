@@ -12,9 +12,9 @@
 namespace Eloquent\Composer\NpmBridge;
 
 use Composer\Util\ProcessExecutor;
+use Eloquent\Phony\Phpunit\Phony;
 use Icecave\Isolator\Isolator;
 use PHPUnit_Framework_TestCase;
-use Phake;
 use Symfony\Component\Process\ExecutableFinder;
 
 class NpmClientTest extends PHPUnit_Framework_TestCase
@@ -23,62 +23,60 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $this->processExecutor = Phake::mock('Composer\Util\ProcessExecutor');
-        $this->executableFinder = Phake::mock('Symfony\Component\Process\ExecutableFinder');
-        $this->isolator = Phake::mock(Isolator::className());
-        $this->client = new NpmClient($this->processExecutor, $this->executableFinder, $this->isolator);
+        $this->processExecutor = Phony::mock('Composer\Util\ProcessExecutor');
+        $this->executableFinder = Phony::mock('Symfony\Component\Process\ExecutableFinder');
+        $this->isolator = Phony::mock(Isolator::className());
+        $this->client =
+            new NpmClient($this->processExecutor->mock(), $this->executableFinder->mock(), $this->isolator->mock());
 
-        Phake::when($this->executableFinder)->find('npm')->thenReturn('/path/to/npm');
-        Phake::when($this->isolator)->getcwd()->thenReturn('/path/to/cwd');
-        Phake::when($this->processExecutor)->execute(Phake::anyParameters())->thenReturn(0);
+        $this->executableFinder->find('npm')->returns('/path/to/npm');
+        $this->isolator->getcwd()->returns('/path/to/cwd');
+        $this->processExecutor->execute('*')->returns(0);
     }
 
     public function testConstructor()
     {
-        $this->assertSame($this->processExecutor, $this->client->processExecutor());
-        $this->assertSame($this->executableFinder, $this->client->executableFinder());
+        $this->assertSame($this->processExecutor->mock(), $this->client->processExecutor());
+        $this->assertSame($this->executableFinder->mock(), $this->client->executableFinder());
     }
 
     public function testConstructorDefaults()
     {
-        $this->client = new NpmClient;
+        $this->client = new NpmClient();
 
-        $this->assertEquals(new ProcessExecutor, $this->client->processExecutor());
-        $this->assertEquals(new ExecutableFinder, $this->client->executableFinder());
+        $this->assertEquals(new ProcessExecutor(), $this->client->processExecutor());
+        $this->assertEquals(new ExecutableFinder(), $this->client->executableFinder());
     }
 
     public function testInstall()
     {
         $this->assertNull($this->client->install('/path/to/project'));
         $this->assertNull($this->client->install('/path/to/project'));
-        $preChdir = Phake::verify($this->isolator, Phake::times(2))->chdir('/path/to/project');
-        $postChdir = Phake::verify($this->isolator, Phake::times(2))->chdir('/path/to/cwd');
-        $install = Phake::verify($this->processExecutor, Phake::times(2))->execute("'/path/to/npm' 'install'");
-        Phake::inOrder(
-            Phake::verify($this->executableFinder)->find('npm'),
-            $preChdir,
-            $install,
-            $postChdir,
-            $preChdir,
-            $install,
-            $postChdir
+        Phony::inOrder(
+            $this->executableFinder->find->calledWith('npm'),
+            $this->isolator->chdir->calledWith('/path/to/project'),
+            $this->processExecutor->execute->calledWith("'/path/to/npm' 'install'"),
+            $this->isolator->chdir->calledWith('/path/to/cwd'),
+            $this->isolator->chdir->calledWith('/path/to/project'),
+            $this->processExecutor->execute->calledWith("'/path/to/npm' 'install'"),
+            $this->isolator->chdir->calledWith('/path/to/cwd')
         );
     }
 
     public function testInstallProductionMode()
     {
         $this->assertNull($this->client->install('/path/to/project', false));
-        Phake::inOrder(
-            Phake::verify($this->executableFinder)->find('npm'),
-            Phake::verify($this->isolator)->chdir('/path/to/project'),
-            Phake::verify($this->processExecutor)->execute("'/path/to/npm' 'install' '--production'"),
-            Phake::verify($this->isolator)->chdir('/path/to/cwd')
+        Phony::inOrder(
+            $this->executableFinder->find->calledWith('npm'),
+            $this->isolator->chdir->calledWith('/path/to/project'),
+            $this->processExecutor->execute->calledWith("'/path/to/npm' 'install' '--production'"),
+            $this->isolator->chdir->calledWith('/path/to/cwd')
         );
     }
 
     public function testInstallFailureNpmNotFound()
     {
-        Phake::when($this->executableFinder)->find('npm')->thenReturn(null);
+        $this->executableFinder->find('npm')->returns(null);
 
         $this->setExpectedException('Eloquent\Composer\NpmBridge\Exception\NpmNotFoundException');
         $this->client->install('/path/to/project');
@@ -86,7 +84,7 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
 
     public function testInstallFailureCommandFailed()
     {
-        Phake::when($this->processExecutor)->execute(Phake::anyParameters())->thenReturn(1);
+        $this->processExecutor->execute('*')->returns(1);
 
         $this->setExpectedException('Eloquent\Composer\NpmBridge\Exception\NpmCommandFailedException');
         $this->client->install('/path/to/project');
@@ -96,23 +94,20 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
     {
         $this->assertNull($this->client->update('/path/to/project'));
         $this->assertNull($this->client->update('/path/to/project'));
-        $preChdir = Phake::verify($this->isolator, Phake::times(2))->chdir('/path/to/project');
-        $postChdir = Phake::verify($this->isolator, Phake::times(2))->chdir('/path/to/cwd');
-        $update = Phake::verify($this->processExecutor, Phake::times(2))->execute("'/path/to/npm' 'update'");
-        Phake::inOrder(
-            Phake::verify($this->executableFinder)->find('npm'),
-            $preChdir,
-            $update,
-            $postChdir,
-            $preChdir,
-            $update,
-            $postChdir
+        Phony::inOrder(
+            $this->executableFinder->find->calledWith('npm'),
+            $this->isolator->chdir->calledWith('/path/to/project'),
+            $this->processExecutor->execute->calledWith("'/path/to/npm' 'update'"),
+            $this->isolator->chdir->calledWith('/path/to/cwd'),
+            $this->isolator->chdir->calledWith('/path/to/project'),
+            $this->processExecutor->execute->calledWith("'/path/to/npm' 'update'"),
+            $this->isolator->chdir->calledWith('/path/to/cwd')
         );
     }
 
     public function testUpdateFailureNpmNotFound()
     {
-        Phake::when($this->executableFinder)->find('npm')->thenReturn(null);
+        $this->executableFinder->find('npm')->returns(null);
 
         $this->setExpectedException('Eloquent\Composer\NpmBridge\Exception\NpmNotFoundException');
         $this->client->update('/path/to/project');
@@ -120,7 +115,7 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
 
     public function testUpdateFailureCommandFailed()
     {
-        Phake::when($this->processExecutor)->execute(Phake::anyParameters())->thenReturn(1);
+        $this->processExecutor->execute('*')->returns(1);
 
         $this->setExpectedException('Eloquent\Composer\NpmBridge\Exception\NpmCommandFailedException');
         $this->client->update('/path/to/project');
@@ -130,23 +125,20 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
     {
         $this->assertNull($this->client->shrinkwrap('/path/to/project'));
         $this->assertNull($this->client->shrinkwrap('/path/to/project'));
-        $preChdir = Phake::verify($this->isolator, Phake::times(2))->chdir('/path/to/project');
-        $postChdir = Phake::verify($this->isolator, Phake::times(2))->chdir('/path/to/cwd');
-        $shrinkwrap = Phake::verify($this->processExecutor, Phake::times(2))->execute("'/path/to/npm' 'shrinkwrap'");
-        Phake::inOrder(
-            Phake::verify($this->executableFinder)->find('npm'),
-            $preChdir,
-            $shrinkwrap,
-            $postChdir,
-            $preChdir,
-            $shrinkwrap,
-            $postChdir
+        Phony::inOrder(
+            $this->executableFinder->find->calledWith('npm'),
+            $this->isolator->chdir->calledWith('/path/to/project'),
+            $this->processExecutor->execute->calledWith("'/path/to/npm' 'shrinkwrap'"),
+            $this->isolator->chdir->calledWith('/path/to/cwd'),
+            $this->isolator->chdir->calledWith('/path/to/project'),
+            $this->processExecutor->execute->calledWith("'/path/to/npm' 'shrinkwrap'"),
+            $this->isolator->chdir->calledWith('/path/to/cwd')
         );
     }
 
     public function testShrinkwrapFailureNpmNotFound()
     {
-        Phake::when($this->executableFinder)->find('npm')->thenReturn(null);
+        $this->executableFinder->find('npm')->returns(null);
 
         $this->setExpectedException('Eloquent\Composer\NpmBridge\Exception\NpmNotFoundException');
         $this->client->shrinkwrap('/path/to/project');
@@ -154,7 +146,7 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
 
     public function testShrinkwrapFailureCommandFailed()
     {
-        Phake::when($this->processExecutor)->execute(Phake::anyParameters())->thenReturn(1);
+        $this->processExecutor->execute('*')->returns(1);
 
         $this->setExpectedException('Eloquent\Composer\NpmBridge\Exception\NpmCommandFailedException');
         $this->client->shrinkwrap('/path/to/project');

@@ -18,7 +18,7 @@ class NpmCommandFailedExceptionTest extends PHPUnit_Framework_TestCase
 {
     public function testException()
     {
-        $cause = new Exception;
+        $cause = new Exception();
         $exception = new NpmCommandFailedException('command', $cause);
 
         $this->assertSame('command', $exception->command());

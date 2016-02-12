@@ -33,10 +33,10 @@ class NpmClient implements NpmClientInterface
         Isolator $isolator = null
     ) {
         if (null === $processExecutor) {
-            $processExecutor = new ProcessExecutor;
+            $processExecutor = new ProcessExecutor();
         }
         if (null === $executableFinder) {
-            $executableFinder = new ExecutableFinder;
+            $executableFinder = new ExecutableFinder();
         }
 
         $this->processExecutor = $processExecutor;
@@ -157,7 +157,7 @@ class NpmClient implements NpmClientInterface
         if (null === $this->npmPath) {
             $this->npmPath = $this->executableFinder()->find('npm');
             if (null === $this->npmPath) {
-                throw new Exception\NpmNotFoundException;
+                throw new Exception\NpmNotFoundException();
             }
         }
 
