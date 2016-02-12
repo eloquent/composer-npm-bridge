@@ -13,7 +13,7 @@
 [current version]: https://packagist.org/packages/eloquent/composer-npm-bridge
 [version-image]: https://img.shields.io/packagist/v/eloquent/composer-npm-bridge.svg?style=flat-square "This project uses semantic versioning"
 
-## Installation and documentation
+## Installation
 
 * Available as [Composer] package [eloquent/composer-npm-bridge].
 
