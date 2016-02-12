@@ -29,7 +29,7 @@
 To utilize the *Composer NPM bridge*, simply add `eloquent/composer-npm-bridge`
 to the `require` section of the project's Composer configuration:
 
-    composer require eloquent/composer-npm-bridge:~2
+    composer require eloquent/composer-npm-bridge:^3
 
 NPM dependencies are specified via a [package.json] configuration file in the
 root directory of the Composer package. Source control should be configured to
