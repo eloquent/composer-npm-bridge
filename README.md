@@ -17,6 +17,9 @@
 
 * Available as [Composer] package [eloquent/composer-npm-bridge].
 
+[composer]: http://getcomposer.org/
+[eloquent/composer-npm-bridge]: https://packagist.org/packages/eloquent/composer-npm-bridge
+
 ## Requirements
 
 * The `npm` executable must be available in PATH.
