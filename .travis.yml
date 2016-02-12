@@ -9,11 +9,11 @@ matrix:
 
 env:
   global:
-    - ARCHER_PUBLISH_VERSION=7.0
+    - ARCHER_PUBLISH_VERSION=5.6
     - secure: "th+qR2CkDQjUIRPa7apds+yB9oSln5+Xa53Y9V103Uh9cWaKCB5S8Oa351jcBfgDWV2XCe6JKDuK1kAYqTOR1zJaAFuukfbbO0WrxJFC9vVgquT4stekHsScfslWyF0tzTanZif2PwivK6frLketMQwYr1PhhMdZvKMn0s95XcQ="
 
 install:
   - ./.archer/travis.install
 
 script:
-  - ./scripts/travis
+  - ./vendor/bin/archer travis:build --ansi
