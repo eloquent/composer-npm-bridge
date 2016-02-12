@@ -13,7 +13,6 @@ namespace Eloquent\Composer\NpmBridge;
 
 use Composer\Util\ProcessExecutor;
 use Eloquent\Phony\Phpunit\Phony;
-use Icecave\Isolator\Isolator;
 use PHPUnit_Framework_TestCase;
 use Symfony\Component\Process\ExecutableFinder;
 
@@ -23,7 +22,7 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
     {
         $this->processExecutor = Phony::mock('Composer\Util\ProcessExecutor');
         $this->executableFinder = Phony::mock('Symfony\Component\Process\ExecutableFinder');
-        $this->isolator = Phony::mock(Isolator::className());
+        $this->isolator = Phony::mock('Icecave\Isolator\Isolator');
         $this->client =
             new NpmClient($this->processExecutor->mock(), $this->executableFinder->mock(), $this->isolator->mock());
 

@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "05cc8d3526e4d722d359822148459866",
-    "content-hash": "9a89593d7e42916d9909eb16e337e07b",
+    "hash": "34367a889d13a09ad984d190e5795898",
+    "content-hash": "60748e1cbbc9d988c9d9cea64b80bdf4",
     "packages": [
         {
             "name": "icecave/isolator",
-            "version": "2.3.0",
+            "version": "3.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/IcecaveStudios/isolator.git",
-                "reference": "97c51fafa39c57a8f1a31f978a48fbe6cea4a5d5"
+                "reference": "8fad9e64c393238b01b359e01bd7f25dcdb818e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/IcecaveStudios/isolator/zipball/97c51fafa39c57a8f1a31f978a48fbe6cea4a5d5",
-                "reference": "97c51fafa39c57a8f1a31f978a48fbe6cea4a5d5",
+                "url": "https://api.github.com/repos/IcecaveStudios/isolator/zipball/8fad9e64c393238b01b359e01bd7f25dcdb818e4",
+                "reference": "8fad9e64c393238b01b359e01bd7f25dcdb818e4",
                 "shasum": ""
             },
             "require": {
@@ -27,14 +27,19 @@
             "require-dev": {
                 "icecave/archer": "~1"
             },
-            "suggest": {
-                "eloquent/asplode": "Drop-in exception-based error handling."
-            },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop": "3.0.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Icecave\\Isolator\\": "src"
-                }
+                },
+                "files": [
+                    "src/register-autoloader.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -50,14 +55,15 @@
             "description": "Dependency injection for global functions.",
             "homepage": "https://github.com/IcecaveStudios/isolator",
             "keywords": [
+                "Double",
                 "fake",
                 "mock",
-                "phake",
                 "phpunit",
+                "stub",
                 "test",
                 "unit"
             ],
-            "time": "2014-08-12 03:16:11"
+            "time": "2015-03-27 05:04:19"
         }
     ],
     "packages-dev": [
