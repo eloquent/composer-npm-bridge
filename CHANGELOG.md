@@ -1,6 +1,6 @@
 # Composer NPM bridge changelog
 
-## Next release
+## 3.0.0 (2016-02-12)
 
 - **[BC BREAK]** Stripped down implementation, many public methods removed.
 - **[FIXED]** Updated Composer API version constraint ([#10]).
