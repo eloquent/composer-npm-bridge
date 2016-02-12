@@ -1,5 +1,11 @@
 # Composer NPM bridge changelog
 
+## Next release
+
+- **[FIXED]** Updated Composer API version constraint ([#10]).
+
+[#10]: https://github.com/eloquent/composer-npm-bridge/issues/10
+
 ## 2.1.1 (2014-09-08)
 
 - **[IMPROVED]** Support for custom installation paths as determined by Composer
