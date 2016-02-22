@@ -22,13 +22,14 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
     {
         $this->processExecutor = Phony::mock('Composer\Util\ProcessExecutor');
         $this->executableFinder = Phony::mock('Symfony\Component\Process\ExecutableFinder');
-        $this->isolator = Phony::mock('Icecave\Isolator\Isolator');
+        $this->getcwd = Phony::stub();
+        $this->chdir = Phony::stub();
         $this->client =
-            new NpmClient($this->processExecutor->mock(), $this->executableFinder->mock(), $this->isolator->mock());
+            new NpmClient($this->processExecutor->mock(), $this->executableFinder->mock(), $this->getcwd, $this->chdir);
 
-        $this->executableFinder->find('npm')->returns('/path/to/npm');
-        $this->isolator->getcwd()->returns('/path/to/cwd');
         $this->processExecutor->execute('*')->returns(0);
+        $this->executableFinder->find('npm')->returns('/path/to/npm');
+        $this->getcwd->returns('/path/to/cwd');
     }
 
     public function testInstall()
@@ -37,12 +38,12 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
         $this->assertNull($this->client->install('/path/to/project'));
         Phony::inOrder(
             $this->executableFinder->find->calledWith('npm'),
-            $this->isolator->chdir->calledWith('/path/to/project'),
+            $this->chdir->calledWith('/path/to/project'),
             $this->processExecutor->execute->calledWith("'/path/to/npm' 'install'"),
-            $this->isolator->chdir->calledWith('/path/to/cwd'),
-            $this->isolator->chdir->calledWith('/path/to/project'),
+            $this->chdir->calledWith('/path/to/cwd'),
+            $this->chdir->calledWith('/path/to/project'),
             $this->processExecutor->execute->calledWith("'/path/to/npm' 'install'"),
-            $this->isolator->chdir->calledWith('/path/to/cwd')
+            $this->chdir->calledWith('/path/to/cwd')
         );
     }
 
@@ -51,9 +52,9 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
         $this->assertNull($this->client->install('/path/to/project', false));
         Phony::inOrder(
             $this->executableFinder->find->calledWith('npm'),
-            $this->isolator->chdir->calledWith('/path/to/project'),
+            $this->chdir->calledWith('/path/to/project'),
             $this->processExecutor->execute->calledWith("'/path/to/npm' 'install' '--production'"),
-            $this->isolator->chdir->calledWith('/path/to/cwd')
+            $this->chdir->calledWith('/path/to/cwd')
         );
     }
 
@@ -79,12 +80,12 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
         $this->assertNull($this->client->update('/path/to/project'));
         Phony::inOrder(
             $this->executableFinder->find->calledWith('npm'),
-            $this->isolator->chdir->calledWith('/path/to/project'),
+            $this->chdir->calledWith('/path/to/project'),
             $this->processExecutor->execute->calledWith("'/path/to/npm' 'update'"),
-            $this->isolator->chdir->calledWith('/path/to/cwd'),
-            $this->isolator->chdir->calledWith('/path/to/project'),
+            $this->chdir->calledWith('/path/to/cwd'),
+            $this->chdir->calledWith('/path/to/project'),
             $this->processExecutor->execute->calledWith("'/path/to/npm' 'update'"),
-            $this->isolator->chdir->calledWith('/path/to/cwd')
+            $this->chdir->calledWith('/path/to/cwd')
         );
     }
 
@@ -110,12 +111,12 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
         $this->assertNull($this->client->shrinkwrap('/path/to/project'));
         Phony::inOrder(
             $this->executableFinder->find->calledWith('npm'),
-            $this->isolator->chdir->calledWith('/path/to/project'),
+            $this->chdir->calledWith('/path/to/project'),
             $this->processExecutor->execute->calledWith("'/path/to/npm' 'shrinkwrap'"),
-            $this->isolator->chdir->calledWith('/path/to/cwd'),
-            $this->isolator->chdir->calledWith('/path/to/project'),
+            $this->chdir->calledWith('/path/to/cwd'),
+            $this->chdir->calledWith('/path/to/project'),
             $this->processExecutor->execute->calledWith("'/path/to/npm' 'shrinkwrap'"),
-            $this->isolator->chdir->calledWith('/path/to/cwd')
+            $this->chdir->calledWith('/path/to/cwd')
         );
     }
 

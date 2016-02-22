@@ -4,68 +4,9 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "34367a889d13a09ad984d190e5795898",
-    "content-hash": "60748e1cbbc9d988c9d9cea64b80bdf4",
-    "packages": [
-        {
-            "name": "icecave/isolator",
-            "version": "3.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/IcecaveStudios/isolator.git",
-                "reference": "8fad9e64c393238b01b359e01bd7f25dcdb818e4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/IcecaveStudios/isolator/zipball/8fad9e64c393238b01b359e01bd7f25dcdb818e4",
-                "reference": "8fad9e64c393238b01b359e01bd7f25dcdb818e4",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3"
-            },
-            "require-dev": {
-                "icecave/archer": "~1"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-develop": "3.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Icecave\\Isolator\\": "src"
-                },
-                "files": [
-                    "src/register-autoloader.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "James Harris",
-                    "email": "james.harris@icecave.com.au",
-                    "homepage": "https://github.com/jmalloc"
-                }
-            ],
-            "description": "Dependency injection for global functions.",
-            "homepage": "https://github.com/IcecaveStudios/isolator",
-            "keywords": [
-                "Double",
-                "fake",
-                "mock",
-                "phpunit",
-                "stub",
-                "test",
-                "unit"
-            ],
-            "time": "2015-03-27 05:04:19"
-        }
-    ],
+    "hash": "cf5c6bb6890a089cfa1b926c9ddf9965",
+    "content-hash": "d4fa4aeeb9c8c2b836114efc66f8690f",
+    "packages": [],
     "packages-dev": [
         {
             "name": "composer/composer",
@@ -73,12 +14,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "6d1ebba75e99b8c714112bc85e96591ee0fdf0b4"
+                "reference": "4c0e163977f8289288df7b37e0fd0469d3e8cbc6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/6d1ebba75e99b8c714112bc85e96591ee0fdf0b4",
-                "reference": "6d1ebba75e99b8c714112bc85e96591ee0fdf0b4",
+                "url": "https://api.github.com/repos/composer/composer/zipball/4c0e163977f8289288df7b37e0fd0469d3e8cbc6",
+                "reference": "4c0e163977f8289288df7b37e0fd0469d3e8cbc6",
                 "shasum": ""
             },
             "require": {
@@ -140,7 +81,7 @@
                 "dependency",
                 "package"
             ],
-            "time": "2016-02-11 11:17:41"
+            "time": "2016-02-20 19:28:03"
         },
         {
             "name": "composer/semver",
@@ -590,22 +531,24 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "v1.5.0",
+            "version": "v1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "4745ded9307786b730d7a60df5cb5a6c43cf95f7"
+                "reference": "3c91bdf81797d725b14cb62906f9a4ce44235972"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/4745ded9307786b730d7a60df5cb5a6c43cf95f7",
-                "reference": "4745ded9307786b730d7a60df5cb5a6c43cf95f7",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/3c91bdf81797d725b14cb62906f9a4ce44235972",
+                "reference": "3c91bdf81797d725b14cb62906f9a4ce44235972",
                 "shasum": ""
             },
             "require": {
                 "doctrine/instantiator": "^1.0.2",
+                "php": "^5.3|^7.0",
                 "phpdocumentor/reflection-docblock": "~2.0",
-                "sebastian/comparator": "~1.1"
+                "sebastian/comparator": "~1.1",
+                "sebastian/recursion-context": "~1.0"
             },
             "require-dev": {
                 "phpspec/phpspec": "~2.0"
@@ -613,7 +556,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.4.x-dev"
+                    "dev-master": "1.5.x-dev"
                 }
             },
             "autoload": {
@@ -646,7 +589,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2015-08-13 10:07:40"
+            "time": "2016-02-15 07:46:21"
         },
         {
             "name": "phpunit/php-code-coverage",

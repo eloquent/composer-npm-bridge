@@ -1,5 +1,11 @@
 # Composer NPM bridge changelog
 
+## Next release
+
+- **[FIXED]** Fixed bug where Isolator was unable to be autoloaded ([#11]).
+
+[#11]: https://github.com/eloquent/composer-npm-bridge/issues/11
+
 ## 3.0.0 (2016-02-12)
 
 - **[BC BREAK]** Stripped down implementation, many public methods removed.

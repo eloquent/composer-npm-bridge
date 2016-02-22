@@ -14,7 +14,6 @@ namespace Eloquent\Composer\NpmBridge;
 use Composer\Util\ProcessExecutor;
 use Eloquent\Composer\NpmBridge\Exception\NpmCommandFailedException;
 use Eloquent\Composer\NpmBridge\Exception\NpmNotFoundException;
-use Icecave\Isolator\Isolator;
 use Symfony\Component\Process\ExecutableFinder;
 
 /**
@@ -29,11 +28,7 @@ class NpmClient
      */
     public static function create()
     {
-        return new self(
-            new ProcessExecutor(),
-            new ExecutableFinder(),
-            Isolator::get()
-        );
+        return new self(new ProcessExecutor(), new ExecutableFinder());
     }
 
     /**
@@ -43,16 +38,19 @@ class NpmClient
      *
      * @param ProcessExecutor  $processExecutor  The process executor to use.
      * @param ExecutableFinder $executableFinder The executable finder to use.
-     * @param Isolator         $isolator         The isolator to use.
+     * @param callable         $getcwd           The getcwd() implementation to use.
+     * @param callable         $chdir            The chdir() implementation to use.
      */
     public function __construct(
         ProcessExecutor $processExecutor,
         ExecutableFinder $executableFinder,
-        Isolator $isolator
+        $getcwd = 'getcwd',
+        $chdir = 'chdir'
     ) {
         $this->processExecutor = $processExecutor;
         $this->executableFinder = $executableFinder;
-        $this->isolator = $isolator;
+        $this->getcwd = $getcwd;
+        $this->chdir = $chdir;
     }
 
     /**
@@ -111,14 +109,14 @@ class NpmClient
         $command = implode(' ', array_map('escapeshellarg', $arguments));
 
         if (null !== $workingDirectoryPath) {
-            $previousWorkingDirectoryPath = $this->isolator->getcwd();
-            $this->isolator->chdir($workingDirectoryPath);
+            $previousWorkingDirectoryPath = call_user_func($this->getcwd);
+            call_user_func($this->chdir, $workingDirectoryPath);
         }
 
         $exitCode = $this->processExecutor->execute($command);
 
         if (null !== $workingDirectoryPath) {
-            $this->isolator->chdir($previousWorkingDirectoryPath);
+            call_user_func($this->chdir, $previousWorkingDirectoryPath);
         }
 
         if (0 !== $exitCode) {
@@ -141,6 +139,7 @@ class NpmClient
 
     private $processExecutor;
     private $executableFinder;
-    private $isolator;
+    private $getcwd;
+    private $chdir;
     private $npmPath;
 }
