@@ -1,6 +1,6 @@
 # Composer NPM bridge changelog
 
-## Next release
+## 3.0.1 (2016-02-22)
 
 - **[FIXED]** Fixed bug where Isolator was unable to be autoloaded ([#11]).
 
