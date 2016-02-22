@@ -13,9 +13,12 @@
 [current version]: https://packagist.org/packages/eloquent/composer-npm-bridge
 [version-image]: https://img.shields.io/packagist/v/eloquent/composer-npm-bridge.svg?style=flat-square "This project uses semantic versioning"
 
-## Installation and documentation
+## Installation
 
 * Available as [Composer] package [eloquent/composer-npm-bridge].
+
+[composer]: http://getcomposer.org/
+[eloquent/composer-npm-bridge]: https://packagist.org/packages/eloquent/composer-npm-bridge
 
 ## Requirements
 
@@ -26,7 +29,7 @@
 To utilize the *Composer NPM bridge*, simply add `eloquent/composer-npm-bridge`
 to the `require` section of the project's Composer configuration:
 
-    composer require eloquent/composer-npm-bridge:~2
+    composer require eloquent/composer-npm-bridge:^3
 
 NPM dependencies are specified via a [package.json] configuration file in the
 root directory of the Composer package. Source control should be configured to
