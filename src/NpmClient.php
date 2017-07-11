@@ -90,19 +90,6 @@ class NpmClient
         $this->executeNpm(array('update'), $path);
     }
 
-    /**
-     * Shrink-wrap NPM dependencies for the project at the supplied path.
-     *
-     * @param string|null $path The path to the NPM project, or null to use the current working directory.
-     *
-     * @throws NpmNotFoundException      If the npm executable cannot be located.
-     * @throws NpmCommandFailedException If the operation fails.
-     */
-    public function shrinkwrap($path = null)
-    {
-        $this->executeNpm(array('shrinkwrap'), $path);
-    }
-
     private function executeNpm($arguments, $workingDirectoryPath)
     {
         array_unshift($arguments, $this->npmPath());

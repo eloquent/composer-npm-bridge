@@ -86,7 +86,6 @@ class NpmBridge
         if ($this->isDependantPackage($composer->getPackage(), true)) {
             $this->client->update();
             $this->client->install(null, true);
-            $this->client->shrinkwrap();
         } else {
             $this->io->write('Nothing to update');
         }
