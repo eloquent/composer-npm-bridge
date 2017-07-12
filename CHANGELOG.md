@@ -1,6 +1,6 @@
 # Composer NPM bridge changelog
 
-## Next release
+## 4.0.0 (2017-07-12)
 
 - **[BC BREAK]** With the introduction of NPM's [`package-lock.json`], *Composer
   NPM bridge* no longer manages shrinkwrap files.
