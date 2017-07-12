@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the Composer NPM bridge package.
- *
- * Copyright © 2016 Erin Millard
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Eloquent\Composer\NpmBridge;
 
 use Composer\IO\IOInterface;
@@ -23,7 +14,7 @@ class NpmBridgeFactory
      *
      * @return self The newly created factory.
      */
-    public static function create()
+    public static function create(): self
     {
         return new self(
             new NpmVendorFinder(),
@@ -52,7 +43,7 @@ class NpmBridgeFactory
      *
      * @param IOInterface $io The i/o interface to use.
      */
-    public function createBridge(IOInterface $io)
+    public function createBridge(IOInterface $io): NpmBridge
     {
         return new NpmBridge($io, $this->vendorFinder, $this->client);
     }

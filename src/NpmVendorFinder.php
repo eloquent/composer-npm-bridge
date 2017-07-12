@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the Composer NPM bridge package.
- *
- * Copyright © 2016 Erin Millard
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Eloquent\Composer\NpmBridge;
 
 use Composer\Composer;
@@ -27,12 +18,12 @@ class NpmVendorFinder
      *
      * @return array<integer,PackageInterface> The list of NPM bridge enabled vendor packages.
      */
-    public function find(Composer $composer, NpmBridge $bridge)
+    public function find(Composer $composer, NpmBridge $bridge): array
     {
         $packages = $composer->getRepositoryManager()->getLocalRepository()
             ->getPackages();
 
-        $dependantPackages = array();
+        $dependantPackages = [];
 
         foreach ($packages as $package) {
             if ($bridge->isDependantPackage($package, false)) {

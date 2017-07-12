@@ -1,22 +1,11 @@
 <?php
 
-/*
- * This file is part of the Composer NPM bridge package.
- *
- * Copyright © 2016 Erin Millard
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Eloquent\Composer\NpmBridge;
 
-use Composer\Util\ProcessExecutor;
 use Eloquent\Phony\Phpunit\Phony;
-use PHPUnit_Framework_TestCase;
-use Symfony\Component\Process\ExecutableFinder;
+use PHPUnit\Framework\TestCase;
 
-class NpmClientTest extends PHPUnit_Framework_TestCase
+class NpmClientTest extends TestCase
 {
     protected function setUp()
     {
@@ -25,10 +14,10 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
         $this->getcwd = Phony::stub();
         $this->chdir = Phony::stub();
         $this->client =
-            new NpmClient($this->processExecutor->mock(), $this->executableFinder->mock(), $this->getcwd, $this->chdir);
+            new NpmClient($this->processExecutor->get(), $this->executableFinder->get(), $this->getcwd, $this->chdir);
 
-        $this->processExecutor->execute('*')->returns(0);
-        $this->executableFinder->find('npm')->returns('/path/to/npm');
+        $this->processExecutor->execute->returns(0);
+        $this->executableFinder->find->with('npm')->returns('/path/to/npm');
         $this->getcwd->returns('/path/to/cwd');
     }
 
@@ -60,17 +49,17 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
 
     public function testInstallFailureNpmNotFound()
     {
-        $this->executableFinder->find('npm')->returns(null);
+        $this->executableFinder->find->with('npm')->returns(null);
 
-        $this->setExpectedException('Eloquent\Composer\NpmBridge\Exception\NpmNotFoundException');
+        $this->expectException('Eloquent\Composer\NpmBridge\Exception\NpmNotFoundException');
         $this->client->install('/path/to/project');
     }
 
     public function testInstallFailureCommandFailed()
     {
-        $this->processExecutor->execute('*')->returns(1);
+        $this->processExecutor->execute->returns(1);
 
-        $this->setExpectedException('Eloquent\Composer\NpmBridge\Exception\NpmCommandFailedException');
+        $this->expectException('Eloquent\Composer\NpmBridge\Exception\NpmCommandFailedException');
         $this->client->install('/path/to/project');
     }
 
@@ -91,48 +80,17 @@ class NpmClientTest extends PHPUnit_Framework_TestCase
 
     public function testUpdateFailureNpmNotFound()
     {
-        $this->executableFinder->find('npm')->returns(null);
+        $this->executableFinder->find->with('npm')->returns(null);
 
-        $this->setExpectedException('Eloquent\Composer\NpmBridge\Exception\NpmNotFoundException');
+        $this->expectException('Eloquent\Composer\NpmBridge\Exception\NpmNotFoundException');
         $this->client->update('/path/to/project');
     }
 
     public function testUpdateFailureCommandFailed()
     {
-        $this->processExecutor->execute('*')->returns(1);
+        $this->processExecutor->execute->returns(1);
 
-        $this->setExpectedException('Eloquent\Composer\NpmBridge\Exception\NpmCommandFailedException');
+        $this->expectException('Eloquent\Composer\NpmBridge\Exception\NpmCommandFailedException');
         $this->client->update('/path/to/project');
-    }
-
-    public function testShrinkwrap()
-    {
-        $this->assertNull($this->client->shrinkwrap('/path/to/project'));
-        $this->assertNull($this->client->shrinkwrap('/path/to/project'));
-        Phony::inOrder(
-            $this->executableFinder->find->calledWith('npm'),
-            $this->chdir->calledWith('/path/to/project'),
-            $this->processExecutor->execute->calledWith("'/path/to/npm' 'shrinkwrap'"),
-            $this->chdir->calledWith('/path/to/cwd'),
-            $this->chdir->calledWith('/path/to/project'),
-            $this->processExecutor->execute->calledWith("'/path/to/npm' 'shrinkwrap'"),
-            $this->chdir->calledWith('/path/to/cwd')
-        );
-    }
-
-    public function testShrinkwrapFailureNpmNotFound()
-    {
-        $this->executableFinder->find('npm')->returns(null);
-
-        $this->setExpectedException('Eloquent\Composer\NpmBridge\Exception\NpmNotFoundException');
-        $this->client->shrinkwrap('/path/to/project');
-    }
-
-    public function testShrinkwrapFailureCommandFailed()
-    {
-        $this->processExecutor->execute('*')->returns(1);
-
-        $this->setExpectedException('Eloquent\Composer\NpmBridge\Exception\NpmCommandFailedException');
-        $this->client->shrinkwrap('/path/to/project');
     }
 }

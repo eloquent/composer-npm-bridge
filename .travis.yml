@@ -1,19 +1,28 @@
-sudo: false
 language: php
 
-php: ["5.3", "5.4", "5.5", "5.6", "7.0", "hhvm"]
-
 matrix:
-    allow_failures: [{"php": "hhvm"}]
+    include:
+        - php: 7.0
+        - php: 7.1
+        - php: nightly
     fast_finish: true
+    allow_failures:
+        - php: nightly
+
+before_install:
+    - phpenv config-rm xdebug.ini || true
+    - composer config --global github-oauth.github.com $GITHUB_TOKEN
+install: composer install --prefer-dist --no-progress --no-interaction
+script: scripts/travis
+after_script: scripts/travis-after
 
 env:
-  global:
-    - ARCHER_PUBLISH_VERSION=5.6
-    - secure: "th+qR2CkDQjUIRPa7apds+yB9oSln5+Xa53Y9V103Uh9cWaKCB5S8Oa351jcBfgDWV2XCe6JKDuK1kAYqTOR1zJaAFuukfbbO0WrxJFC9vVgquT4stekHsScfslWyF0tzTanZif2PwivK6frLketMQwYr1PhhMdZvKMn0s95XcQ="
+    global:
+        - ELOQUENT_PUBLISH_VERSION=7.1
+        - secure: "JrS9dsTpD9MQScxlF/9QPYPFWSWyxRoWsfsEErXZ0diu6WnrObMdq6CAFWe2nYKs52rHBxHaGV6RWtMaaa2SfTLiDpslFZ2pUtTb044FyIjKSIB0yg5O0rq5y6NIFaEvc4VWPRkDfoGy7Kqvq/WI70sAYRYzj2dvLoa3ZrSHohw="
 
-install:
-  - ./.archer/travis.install
+cache:
+    directories:
+        - $HOME/.composer
 
-script:
-  - ./vendor/bin/archer travis:build --ansi
+sudo: false

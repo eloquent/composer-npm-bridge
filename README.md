@@ -15,14 +15,14 @@
 
 ## Installation
 
-* Available as [Composer] package [eloquent/composer-npm-bridge].
+- Available as [Composer] package [eloquent/composer-npm-bridge].
 
 [composer]: http://getcomposer.org/
 [eloquent/composer-npm-bridge]: https://packagist.org/packages/eloquent/composer-npm-bridge
 
 ## Requirements
 
-* The `npm` executable must be available in PATH.
+- The `npm` executable must be available in PATH.
 
 ## Usage
 
@@ -49,7 +49,7 @@ In addition to normal operation, `composer install` will [install] NPM
 dependencies for all Composer packages using the bridge. This includes the root
 package, as well as Composer dependencies. Similarly, `composer update` will
 [install] NPM dependencies for all Composer dependencies using the bridge. It
-will also [update] and [shrinkwrap] the NPM dependencies for the root project.
+will also [update] the NPM dependencies for the root project.
 
 NPM dependencies will be installed exactly as if `npm install` were run from the
 root directory of the package. This applies even if the package is installed as
@@ -57,7 +57,6 @@ a dependency.
 
 [install]: https://npmjs.org/doc/install.html
 [npm]: https://npmjs.org/
-[shrinkwrap]: https://npmjs.org/doc/shrinkwrap.html
 [update]: https://npmjs.org/doc/update.html
 
 ## Caveats

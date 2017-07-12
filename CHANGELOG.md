@@ -1,5 +1,13 @@
 # Composer NPM bridge changelog
 
+## Next release
+
+- **[BC BREAK]** With the introduction of NPM's [`package-lock.json`], *Composer
+  NPM bridge* no longer manages shrinkwrap files.
+- **[BC BREAK]** Dropped support for PHP 5.
+
+[`package-lock.json`]: https://docs.npmjs.com/files/package-lock.json
+
 ## 3.0.1 (2016-02-22)
 
 - **[FIXED]** Fixed bug where Isolator was unable to be autoloaded ([#11]).

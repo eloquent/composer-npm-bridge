@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the Composer NPM bridge package.
- *
- * Copyright © 2016 Erin Millard
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Eloquent\Composer\NpmBridge\Exception;
 
 use Exception;
@@ -24,7 +15,7 @@ final class NpmCommandFailedException extends Exception
      * @param string         $command The executed command.
      * @param Exception|null $cause   The cause, if available.
      */
-    public function __construct($command, Exception $cause = null)
+    public function __construct(string $command, Exception $cause = null)
     {
         $this->command = $command;
 
@@ -40,7 +31,7 @@ final class NpmCommandFailedException extends Exception
      *
      * @return string The command.
      */
-    public function command()
+    public function command(): string
     {
         return $this->command;
     }

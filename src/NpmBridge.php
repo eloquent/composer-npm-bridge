@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the Composer NPM bridge package.
- *
- * Copyright © 2016 Erin Millard
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Eloquent\Composer\NpmBridge;
 
 use Composer\Composer;
@@ -18,7 +9,7 @@ use Eloquent\Composer\NpmBridge\Exception\NpmCommandFailedException;
 use Eloquent\Composer\NpmBridge\Exception\NpmNotFoundException;
 
 /**
- * Manages NPM installs, updates, and shrinkwrapping for Composer projects.
+ * Manages NPM installs, and updates for Composer projects.
  */
 class NpmBridge
 {
@@ -45,12 +36,12 @@ class NpmBridge
      * Install NPM dependencies for a Composer project and its dependencies.
      *
      * @param Composer $composer  The main Composer object.
-     * @param boolean  $isDevMode True if dev mode is enabled.
+     * @param bool     $isDevMode True if dev mode is enabled.
      *
      * @throws NpmNotFoundException      If the npm executable cannot be located.
      * @throws NpmCommandFailedException If the operation fails.
      */
-    public function install(Composer $composer, $isDevMode = true)
+    public function install(Composer $composer, bool $isDevMode = true)
     {
         $this->io->write(
             '<info>Installing NPM dependencies for root project</info>'
@@ -67,10 +58,6 @@ class NpmBridge
 
     /**
      * Update NPM dependencies for a Composer project and its dependencies.
-     *
-     * This will update and shrinkwrap the NPM dependencies of the main project.
-     * It will also install any NPM dependencies of the main project's Composer
-     * dependencies.
      *
      * @param Composer $composer The main Composer object.
      *
@@ -97,14 +84,14 @@ class NpmBridge
      * Returns true if the supplied package requires the Composer NPM bridge.
      *
      * @param PackageInterface $package                The package to inspect.
-     * @param boolean          $includeDevDependencies True if the dev dependencies should also be inspected.
+     * @param bool             $includeDevDependencies True if the dev dependencies should also be inspected.
      *
-     * @return boolean True if the package requires the bridge.
+     * @return bool True if the package requires the bridge.
      */
     public function isDependantPackage(
         PackageInterface $package,
-        $includeDevDependencies = false
-    ) {
+        bool $includeDevDependencies = false
+    ): bool {
         foreach ($package->getRequires() as $link) {
             if ('eloquent/composer-npm-bridge' === $link->getTarget()) {
                 return true;

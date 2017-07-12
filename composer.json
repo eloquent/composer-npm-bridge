@@ -13,14 +13,14 @@
     ],
     "type": "composer-plugin",
     "require": {
-        "php": ">=5.3",
+        "php": ">=7",
         "composer-plugin-api": "^1"
     },
     "require-dev": {
         "composer/composer": "dev-master",
-        "eloquent/phony": "^0.8",
-        "icecave/archer": "dev-develop",
-        "phpunit/phpunit": "^4"
+        "eloquent/phony-phpunit": "^2",
+        "errors/exceptions": "^0.2",
+        "phpunit/phpunit": "^6"
     },
     "autoload": {
         "psr-4": {

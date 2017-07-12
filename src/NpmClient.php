@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the Composer NPM bridge package.
- *
- * Copyright © 2016 Erin Millard
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Eloquent\Composer\NpmBridge;
 
 use Composer\Util\ProcessExecutor;
@@ -26,7 +17,7 @@ class NpmClient
      *
      * @return self The newly created client.
      */
-    public static function create()
+    public static function create(): self
     {
         return new self(new ProcessExecutor(), new ExecutableFinder());
     }
@@ -47,6 +38,7 @@ class NpmClient
         $getcwd = 'getcwd',
         $chdir = 'chdir'
     ) {
+
         $this->processExecutor = $processExecutor;
         $this->executableFinder = $executableFinder;
         $this->getcwd = $getcwd;
@@ -56,22 +48,18 @@ class NpmClient
     /**
      * Install NPM dependencies for the project at the supplied path.
      *
-     * @param string|null  $path      The path to the NPM project, or null to use the current working directory.
-     * @param boolean|null $isDevMode True if dev dependencies should be included.
+     * @param string|null $path      The path to the NPM project, or null to use the current working directory.
+     * @param bool        $isDevMode True if dev dependencies should be included.
      *
      * @throws NpmNotFoundException      If the npm executable cannot be located.
      * @throws NpmCommandFailedException If the operation fails.
      */
-    public function install($path = null, $isDevMode = null)
+    public function install(string $path = null, bool $isDevMode = true)
     {
-        if (null === $isDevMode) {
-            $isDevMode = true;
-        }
-
         if ($isDevMode) {
-            $arguments = array('install');
+            $arguments = ['install'];
         } else {
-            $arguments = array('install', '--production');
+            $arguments = ['install', '--production'];
         }
 
         $this->executeNpm($arguments, $path);
@@ -85,9 +73,9 @@ class NpmClient
      * @throws NpmNotFoundException      If the npm executable cannot be located.
      * @throws NpmCommandFailedException If the operation fails.
      */
-    public function update($path = null)
+    public function update(string $path = null)
     {
-        $this->executeNpm(array('update'), $path);
+        $this->executeNpm(['update'], $path);
     }
 
     private function executeNpm($arguments, $workingDirectoryPath)

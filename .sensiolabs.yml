@@ -1,0 +1,5 @@
+rules:
+    php.bad_mutator_method_name_for_boolean_property:
+        enabled: false # code style disagreement
+    php.interface_has_no_interface_suffix:
+        enabled: false # code style disagreement

@@ -1,14 +1,5 @@
 <?php
 
-/*
- * This file is part of the Composer NPM bridge package.
- *
- * Copyright © 2016 Erin Millard
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Eloquent\Composer\NpmBridge;
 
 use Composer\Composer;
@@ -54,12 +45,12 @@ class NpmBridgePlugin implements PluginInterface, EventSubscriberInterface
      *
      * @return array<string,string> The events to listen to, and their associated handlers.
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
-        return array(
+        return [
             ScriptEvents::POST_INSTALL_CMD => 'onPostInstallCmd',
             ScriptEvents::POST_UPDATE_CMD => 'onPostUpdateCmd',
-        );
+        ];
     }
 
     /**
