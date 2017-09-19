@@ -36,6 +36,9 @@ class NpmBridgeFactory
     ) {
         $this->vendorFinder = $vendorFinder;
         $this->client = $client;
+        $this->preloadClasses([
+            NpmBridge::class,
+        ]);
     }
 
     /**
@@ -46,6 +49,13 @@ class NpmBridgeFactory
     public function createBridge(IOInterface $io): NpmBridge
     {
         return new NpmBridge($io, $this->vendorFinder, $this->client);
+    }
+
+    private function preloadClasses(array $classes)
+    {
+        foreach ($classes as $class) {
+            class_exists($class, true);
+        }
     }
 
     private $vendorFinder;
