@@ -37,7 +37,12 @@ class NpmBridgePlugin implements PluginInterface, EventSubscriberInterface
      */
     public function activate(Composer $composer, IOInterface $io)
     {
-        // no action required
+        // preload classes to prevent errors when removing the plugin
+        class_exists(NpmBridge::class);
+        class_exists(NpmBridgeFactory::class);
+        class_exists(NpmClient::class);
+        class_exists(NpmBridge::class);
+        class_exists(NpmVendorFinder::class);
     }
 
     /**

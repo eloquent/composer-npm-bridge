@@ -23,6 +23,12 @@ class NpmBridgePluginTest extends TestCase
         $this->bridgeFactory->createBridge->returns($this->bridge);
     }
 
+    protected function tearDown()
+    {
+        Phony::restoreGlobalFunctions();
+    }
+
+
     public function testConstructorWithoutArguments()
     {
         $this->assertInstanceOf('Eloquent\Composer\NpmBridge\NpmBridgePlugin', new NpmBridgePlugin());
@@ -30,7 +36,14 @@ class NpmBridgePluginTest extends TestCase
 
     public function testActivate()
     {
-        $this->assertNull($this->plugin->activate($this->composer, $this->io));
+        $classExists = Phony::spyGlobal('class_exists', __NAMESPACE__);
+        $this->plugin->activate($this->composer, $this->io);
+
+        $classExists->calledWith(NpmBridge::class);
+        $classExists->calledWith(NpmBridgeFactory::class);
+        $classExists->calledWith(NpmClient::class);
+        $classExists->calledWith(NpmBridge::class);
+        $classExists->calledWith(NpmVendorFinder::class);
     }
 
     public function testGetSubscribedEvents()

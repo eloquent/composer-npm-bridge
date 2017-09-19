@@ -29,5 +29,10 @@
     },
     "extra": {
         "class": "Eloquent\\Composer\\NpmBridge\\NpmBridgePlugin"
+    },
+    "config": {
+        "platform": {
+            "php": "7.0.99999"
+        }
     }
 }
