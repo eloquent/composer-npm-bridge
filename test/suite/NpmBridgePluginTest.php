@@ -28,7 +28,6 @@ class NpmBridgePluginTest extends TestCase
         Phony::restoreGlobalFunctions();
     }
 
-
     public function testConstructorWithoutArguments()
     {
         $this->assertInstanceOf('Eloquent\Composer\NpmBridge\NpmBridgePlugin', new NpmBridgePlugin());

@@ -1,5 +1,14 @@
 # Composer NPM bridge changelog
 
+## 4.0.1 (2017-09-19)
+
+- **[FIXED]** Fixed "class not found" errors when the plugin is removed by
+  Composer ([#5], [#17] - thanks [@garex]).
+
+[#5]: https://github.com/eloquent/composer-npm-bridge/issues/5
+[#17]: https://github.com/eloquent/composer-npm-bridge/pull/17
+[@garex]: https://github.com/garex
+
 ## 4.0.0 (2017-07-12)
 
 - **[BC BREAK]** With the introduction of NPM's [`package-lock.json`], *Composer
