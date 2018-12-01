@@ -59,6 +59,28 @@ a dependency.
 [npm]: https://npmjs.org/
 [update]: https://npmjs.org/doc/update.html
 
+## Configuration
+
+The following configuration can be added to the `composer.json` `extra` area to
+customize the behaviour.
+
+Key|Description
+-|-
+`composer-npm-timeout`|Specify a custom timeout for the installation. The default is 300 seconds.
+`composer-npm-optional`|Skip instead of throwing an exception if `npm` is not found. Other packages using `composer-npm-bridge` that do not set this will still cause an exception.
+
+
+    ...
+    "extra": {
+        "composer-npm-timeout": 9000,
+        "composer-npm-optional": true,
+        ...
+    }
+
+To disable `composer-npm-bridge` entirely for a single run, set `COMPOSER_NPM_BRIDGE_DISABLE=1` on the environment.
+
+    COMPOSER_NPM_BRIDGE_DISABLE=1 composer install
+
 ## Caveats
 
 Because NPM dependencies are installed underneath the root directory of the

@@ -47,8 +47,12 @@ class NpmBridge
             '<info>Installing NPM dependencies for root project</info>'
         );
 
-        if ($this->isDependantPackage($composer->getPackage(), $isDevMode)) {
-            $this->client->install(null, $isDevMode);
+        $package = $composer->getPackage();
+        if ($this->isDependantPackage($package, $isDevMode)) {
+            if (!$this->shouldSkipPackage($package)) {
+                $this->configureClient($package);
+                $this->client->install(null, $isDevMode);
+            }
         } else {
             $this->io->write('Nothing to install');
         }
@@ -70,9 +74,13 @@ class NpmBridge
             '<info>Updating NPM dependencies for root project</info>'
         );
 
-        if ($this->isDependantPackage($composer->getPackage(), true)) {
-            $this->client->update();
-            $this->client->install(null, true);
+        $package = $composer->getPackage();
+        if ($this->isDependantPackage($package, true)) {
+            if (!$this->shouldSkipPackage($package)) {
+                $this->configureClient($package);
+                $this->client->update();
+                $this->client->install(null, true);
+            }
         } else {
             $this->io->write('Nothing to update');
         }
@@ -119,6 +127,10 @@ class NpmBridge
 
         if (count($packages) > 0) {
             foreach ($packages as $package) {
+                if ($this->shouldSkipPackage($package)) {
+                    continue;
+                }
+
                 $this->io->write(
                     sprintf(
                         '<info>Installing NPM dependencies for %s</info>',
@@ -126,6 +138,7 @@ class NpmBridge
                     )
                 );
 
+                $this->configureClient($package);
                 $this->client->install(
                     $composer->getInstallationManager()
                         ->getInstallPath($package),
@@ -135,6 +148,37 @@ class NpmBridge
         } else {
             $this->io->write('Nothing to install');
         }
+    }
+
+    private function configureClient(PackageInterface $package)
+    {
+        $extra = $package->getExtra();
+        // Issue #13 - npm can take a while, so allow a custom timeout
+        if (isset($extra['composer-npm-timeout'])) {
+            $this->client->setTimeout(intval($extra['composer-npm-timeout']));
+        } else {
+            $this->client->setTimeout(null);
+        }
+    }
+
+    private function shouldSkipPackage(PackageInterface $package)
+    {
+        if ($this->client->valid()) {
+            return false;
+        }
+
+        $extra = $package->getExtra();
+        if (!empty($extra['composer-npm-optional'])) {
+            $this->io->write(
+                sprintf(
+                    '<info>Skipping optional NPM dependencies for %s as npm is unavailable</info>',
+                    $package->getPrettyName()
+                )
+            );
+            return true;
+        }
+
+        return false;
     }
 
     private $io;

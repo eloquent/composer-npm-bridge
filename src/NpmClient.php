@@ -43,6 +43,7 @@ class NpmClient
         $this->executableFinder = $executableFinder;
         $this->getcwd = $getcwd;
         $this->chdir = $chdir;
+        $this->timeout = null;
     }
 
     /**
@@ -78,6 +79,31 @@ class NpmClient
         $this->executeNpm(['update'], $path);
     }
 
+    /**
+     * Set timeout. Null to use default
+     *
+     * @param int|null $timeout
+     */
+    public function setTimeout($timeout)
+    {
+        $this->timeout = $timeout;
+    }
+
+    /**
+     * Check is npm is available
+     *
+     * @return bool
+     */
+    public function valid()
+    {
+        try {
+            $this->npmPath();
+        } catch (NpmNotFoundException $err) {
+            return false;
+        }
+        return true;
+    }
+
     private function executeNpm($arguments, $workingDirectoryPath)
     {
         array_unshift($arguments, $this->npmPath());
@@ -88,7 +114,14 @@ class NpmClient
             call_user_func($this->chdir, $workingDirectoryPath);
         }
 
+        if (null !== $this->timeout) {
+            $oldTimeout = $this->processExecutor->getTimeout();
+            $this->processExecutor->setTimeout($this->timeout);
+        }
         $exitCode = $this->processExecutor->execute($command);
+        if (null !== $this->timeout) {
+            $this->processExecutor->setTimeout($oldTimeout);
+        }
 
         if (null !== $workingDirectoryPath) {
             call_user_func($this->chdir, $previousWorkingDirectoryPath);
