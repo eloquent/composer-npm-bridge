@@ -101,6 +101,7 @@ class NpmClient
         } catch (NpmNotFoundException $err) {
             return false;
         }
+
         return true;
     }
 

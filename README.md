@@ -61,19 +61,22 @@ a dependency.
 
 ## Configuration
 
-The following configuration can be added to the `composer.json` `extra` area to
-customize the behaviour.
+The following configuration can be added to `composer.json` `extra/npm-bridge`
+to customize the behaviour on a per-package basis. Values in the root package
+will not currently impact any dependency packages that also use
+`composer-npm-bridge`.
 
 Key|Description
 -|-
-`composer-npm-timeout`|Specify a custom timeout for the installation. The default is 300 seconds.
-`composer-npm-optional`|Skip instead of throwing an exception if `npm` is not found. Other packages using `composer-npm-bridge` that do not set this will still cause an exception.
-
+`timeout`|Specify a custom timeout for the installation. The default is 300 seconds.
+`optional`|Skip instead of throwing an exception if `npm` is not found when processing the package.
 
     ...
     "extra": {
-        "composer-npm-timeout": 9000,
-        "composer-npm-optional": true,
+        "npm-bridge": {
+            "timeout": 9000,
+            "optional": true
+        },
         ...
     }
 

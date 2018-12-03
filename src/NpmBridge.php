@@ -13,6 +13,10 @@ use Eloquent\Composer\NpmBridge\Exception\NpmNotFoundException;
  */
 class NpmBridge
 {
+    const EXTRA_KEY = 'npm-bridge';
+    const EXTRA_KEY_OPTIONAL = 'optional';
+    const EXTRA_KEY_TIMEOUT = 'timeout';
+
     /**
      * Construct a new Composer NPM bridge plugin.
      *
@@ -154,8 +158,8 @@ class NpmBridge
     {
         $extra = $package->getExtra();
         // Issue #13 - npm can take a while, so allow a custom timeout
-        if (isset($extra['composer-npm-timeout'])) {
-            $this->client->setTimeout(intval($extra['composer-npm-timeout']));
+        if (isset($extra[self::EXTRA_KEY][self::EXTRA_KEY_TIMEOUT])) {
+            $this->client->setTimeout(intval($extra[self::EXTRA_KEY][self::EXTRA_KEY_TIMEOUT]));
         } else {
             $this->client->setTimeout(null);
         }
@@ -168,13 +172,14 @@ class NpmBridge
         }
 
         $extra = $package->getExtra();
-        if (!empty($extra['composer-npm-optional'])) {
+        if (!empty($extra[self::EXTRA_KEY][self::EXTRA_KEY_OPTIONAL])) {
             $this->io->write(
                 sprintf(
                     '<info>Skipping optional NPM dependencies for %s as npm is unavailable</info>',
                     $package->getPrettyName()
                 )
             );
+
             return true;
         }
 

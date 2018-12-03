@@ -18,5 +18,5 @@ install:
 .PHONY: test coverage open-coverage lint install
 
 test/bin/php-cs-fixer:
-	curl -sSL http://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -o test/bin/php-cs-fixer
+	curl -sSL https://cs.sensiolabs.org/download/php-cs-fixer-v2.phar -o test/bin/php-cs-fixer
 	chmod +x test/bin/php-cs-fixer

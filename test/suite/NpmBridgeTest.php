@@ -6,9 +6,9 @@ use Composer\Composer;
 use Composer\Package\Link;
 use Composer\Package\Package;
 use Composer\Package\RootPackage;
+use Eloquent\Composer\NpmBridge\Exception\NpmNotFoundException;
 use Eloquent\Phony\Phpunit\Phony;
 use PHPUnit\Framework\TestCase;
-use Eloquent\Composer\NpmBridge\Exception\NpmNotFoundException;
 
 class NpmBridgeTest extends TestCase
 {
@@ -27,7 +27,7 @@ class NpmBridgeTest extends TestCase
         $this->packageB = new Package('vendorB/packageB', '1.0.0.0', '1.0.0');
         $this->packageC = new Package('vendorC/packageC', '1.0.0.0', '1.0.0');
 
-        $this->packageC->setExtra(array('composer-npm-optional' => 1, 'composer-npm-timeout' => 900));
+        $this->packageC->setExtra([NpmBridge::EXTRA_KEY => [NpmBridge::EXTRA_KEY_OPTIONAL => true, NpmBridge::EXTRA_KEY_TIMEOUT => 900]]);
 
         $this->linkRoot1 = new Link('vendor/package', 'vendorX/packageX');
         $this->linkRoot2 = new Link('vendor/package', 'vendorY/packageY');

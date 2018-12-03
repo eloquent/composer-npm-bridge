@@ -56,8 +56,8 @@ class NpmBridgePluginTest extends TestCase
 
         $this->assertSame(
             [
-                ScriptEvents::POST_INSTALL_CMD => array('onPostInstallCmd', 1),
-                ScriptEvents::POST_UPDATE_CMD => array('onPostUpdateCmd', 1),
+                ScriptEvents::POST_INSTALL_CMD => ['onPostInstallCmd', 1],
+                ScriptEvents::POST_UPDATE_CMD => ['onPostUpdateCmd', 1],
             ],
             $this->plugin->getSubscribedEvents()
         );

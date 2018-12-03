@@ -59,8 +59,8 @@ class NpmBridgePlugin implements PluginInterface, EventSubscriberInterface
 
         // Increased priority to ensure we run before custom installers which are usually default priority
         return [
-            ScriptEvents::POST_INSTALL_CMD => array('onPostInstallCmd', 1),
-            ScriptEvents::POST_UPDATE_CMD => array('onPostUpdateCmd', 1),
+            ScriptEvents::POST_INSTALL_CMD => ['onPostInstallCmd', 1],
+            ScriptEvents::POST_UPDATE_CMD => ['onPostUpdateCmd', 1],
         ];
     }
 
