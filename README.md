@@ -64,7 +64,7 @@ a dependency.
 The following configuration can be added to `composer.json` `extra/npm-bridge`
 to customize the behaviour on a per-package basis. Values in the root package
 will not currently impact any dependency packages that also use
-`composer-npm-bridge`.
+`composer-npm-bridge` - each package must define its own options.
 
 Key|Description
 -|-
