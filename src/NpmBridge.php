@@ -54,13 +54,15 @@ class NpmBridge
         $package = $composer->getPackage();
 
         if ($this->isDependantPackage($package, $isDevMode)) {
-            if ($this->shouldSkipPackage($package)) {
+            $extra = $package->getExtra();
+
+            if ($this->shouldSkipPackage($extra)) {
                 $this->io->write('Skipping as NPM is unavailable');
             } else {
                 $this->client->install(
                     null,
                     $isDevMode,
-                    $this->packageTimeout($package)
+                    $this->packageTimeout($extra)
                 );
             }
         } else {
@@ -87,7 +89,7 @@ class NpmBridge
         $package = $composer->getPackage();
 
         if ($this->isDependantPackage($package, true)) {
-            $timeout = $this->packageTimeout($package);
+            $timeout = $this->packageTimeout($package->getExtra());
 
             $this->client->update(null, $timeout);
             $this->client->install(null, true, $timeout);
@@ -139,7 +141,9 @@ class NpmBridge
             $installationManager = $composer->getInstallationManager();
 
             foreach ($packages as $package) {
-                if ($this->shouldSkipPackage($package)) {
+                $extra = $package->getExtra();
+
+                if ($this->shouldSkipPackage($extra)) {
                     $this->io->write(
                         sprintf(
                             '<info>Skipping optional NPM dependencies for %s ' .
@@ -161,7 +165,7 @@ class NpmBridge
                 $this->client->install(
                     $installationManager->getInstallPath($package),
                     false,
-                    $this->packageTimeout($package)
+                    $this->packageTimeout($extra)
                 );
             }
         } else {
@@ -169,9 +173,7 @@ class NpmBridge
         }
     }
 
-    private function packageTimeout(PackageInterface $package) {
-        $extra = $package->getExtra();
-
+    private function packageTimeout(array $extra) {
         if (isset($extra[self::EXTRA_KEY][self::EXTRA_KEY_TIMEOUT])) {
             return intval($extra[self::EXTRA_KEY][self::EXTRA_KEY_TIMEOUT]);
         }
@@ -179,13 +181,11 @@ class NpmBridge
         return null;
     }
 
-    private function shouldSkipPackage(PackageInterface $package)
+    private function shouldSkipPackage(array $extra)
     {
         if ($this->client->isAvailable()) {
             return false;
         }
-
-        $extra = $package->getExtra();
 
         return !empty($extra[self::EXTRA_KEY][self::EXTRA_KEY_OPTIONAL]);
     }
