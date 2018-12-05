@@ -79,12 +79,11 @@ class NpmBridge
         );
 
         $package = $composer->getPackage();
+
         if ($this->isDependantPackage($package, true)) {
-            if (!$this->shouldSkipPackage($package)) {
-                $this->configureClient($package);
-                $this->client->update();
-                $this->client->install(null, true);
-            }
+            $this->configureClient($package);
+            $this->client->update();
+            $this->client->install(null, true);
         } else {
             $this->io->write('Nothing to update');
         }
