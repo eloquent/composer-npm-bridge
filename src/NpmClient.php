@@ -47,6 +47,7 @@ class NpmClient
         $this->getcwd = $getcwd;
         $this->chdir = $chdir;
 
+        $this->isNpmPathChecked = false;
         $this->getTimeout = [$processExecutorClass, 'getTimeout'];
         $this->setTimeout = [$processExecutorClass, 'setTimeout'];
     }
@@ -101,18 +102,18 @@ class NpmClient
      */
     public function isAvailable()
     {
-        try {
-            $this->npmPath();
-        } catch (NpmNotFoundException $err) {
-            return false;
-        }
-
-        return true;
+        return null !== $this->npmPath();
     }
 
     private function executeNpm($arguments, $workingDirectoryPath, $timeout)
     {
-        array_unshift($arguments, $this->npmPath());
+        $npmPath = $this->npmPath();
+
+        if (null === $npmPath) {
+            throw new NpmNotFoundException();
+        }
+
+        array_unshift($arguments, $npmPath);
         $command = implode(' ', array_map('escapeshellarg', $arguments));
 
         if (null !== $workingDirectoryPath) {
@@ -138,12 +139,9 @@ class NpmClient
 
     private function npmPath()
     {
-        if (null === $this->npmPath) {
+        if (!$this->npmPathChecked) {
             $this->npmPath = $this->executableFinder->find('npm');
-
-            if (null === $this->npmPath) {
-                throw new NpmNotFoundException();
-            }
+            $this->npmPathChecked = true;
         }
 
         return $this->npmPath;
@@ -154,6 +152,7 @@ class NpmClient
     private $getcwd;
     private $chdir;
     private $npmPath;
+    private $npmPathChecked;
     private $getTimeout;
     private $setTimeout;
 }

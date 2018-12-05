@@ -121,18 +121,16 @@ class NpmClientTest extends TestCase
         $this->client->update('/path/to/project');
     }
 
-    public function testIsAvailable()
+    public function testIsAvailableTrue()
+    {
+        $this->executableFinder->find->with('npm')->returns('/path/to/npm');
+
+        $this->assertTrue($this->client->isAvailable());
+    }
+
+    public function testIsAvailableFalse()
     {
         $this->executableFinder->find->with('npm')->returns(null);
-        $this->assertSame(
-            false,
-            $this->client->isAvailable()
-        );
-
-        $this->executableFinder->find->with('npm')->returns('/path/to/npm');
-        $this->assertSame(
-            true,
-            $this->client->isAvailable()
-        );
+        $this->assertFalse($this->client->isAvailable());
     }
 }
