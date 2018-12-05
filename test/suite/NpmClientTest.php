@@ -13,62 +13,53 @@ class NpmClientTest extends TestCase
         $this->executableFinder = Phony::mock('Symfony\Component\Process\ExecutableFinder');
         $this->getcwd = Phony::stub();
         $this->chdir = Phony::stub();
-        $this->client =
-            new NpmClient($this->processExecutor->get(), $this->executableFinder->get(), $this->getcwd, $this->chdir);
+        $this->client = new NpmClient(
+            $this->processExecutor->get(),
+            $this->executableFinder->get(),
+            $this->getcwd,
+            $this->chdir,
+            $this->processExecutor->className()
+        );
 
         $this->processExecutor->execute->returns(0);
-        Phony::onStatic($this->processExecutor)->getTimeout->returns(300);
-        Phony::onStatic($this->processExecutor)->setTimeout->returns();
         $this->executableFinder->find->with('npm')->returns('/path/to/npm');
         $this->getcwd->returns('/path/to/cwd');
+
+        $this->processExecutorClass = Phony::onStatic($this->processExecutor);
     }
 
     public function testInstall()
     {
-        $this->assertNull($this->client->install());
+        $this->client->install();
+
         Phony::inOrder(
             $this->executableFinder->find->calledWith('npm'),
-            $this->processExecutor->execute->calledWith("'/path/to/npm' 'install'")
+            $this->processExecutorClass->getTimeout->called(),
+            $this->processExecutorClass->setTimeout->calledWith(NpmClient::DEFAULT_TIMEOUT),
+            $this->processExecutor->execute->calledWith("'/path/to/npm' 'install'"),
+            $this->processExecutorClass->setTimeout->calledWith(
+                $this->processExecutorClass->getTimeout->firstCall()->returnValue()
+            )
         );
-        $this->chdir->never()->returned();
-        $this->processExecutor->setTimeout->never()->returned();
+        $this->chdir->never()->called();
     }
 
-    public function testInstallWorking()
+    public function testInstallWithWorkingDirectory()
     {
-        $this->assertNull($this->client->install('/path/to/project'));
+        $this->client->install('/path/to/project');
+
         Phony::inOrder(
-            $this->executableFinder->find->calledWith('npm'),
             $this->chdir->calledWith('/path/to/project'),
             $this->processExecutor->execute->calledWith("'/path/to/npm' 'install'"),
             $this->chdir->calledWith('/path/to/cwd')
         );
-        $this->processExecutor->setTimeout->never()->returned();
     }
 
-    public function testInstallTimeout()
+    public function testInstallWithoutDevMode()
     {
-        $this->assertNull($this->client->setTimeout(900));
-        $this->assertNull($this->client->install());
-        Phony::inOrder(
-            $this->executableFinder->find->calledWith('npm'),
-            Phony::onStatic($this->processExecutor)->getTimeout->calledWith(),
-            Phony::onStatic($this->processExecutor)->setTimeout->calledWith(900),
-            $this->processExecutor->execute->calledWith("'/path/to/npm' 'install'"),
-            Phony::onStatic($this->processExecutor)->setTimeout->calledWith(300)
-        );
-        $this->chdir->never()->returned();
-    }
+        $this->client->install(null, false);
 
-    public function testInstallProductionMode()
-    {
-        $this->assertNull($this->client->install('/path/to/project', false));
-        Phony::inOrder(
-            $this->executableFinder->find->calledWith('npm'),
-            $this->chdir->calledWith('/path/to/project'),
-            $this->processExecutor->execute->calledWith("'/path/to/npm' 'install' '--production'"),
-            $this->chdir->calledWith('/path/to/cwd')
-        );
+        $this->processExecutor->execute->calledWith("'/path/to/npm' 'install' '--production'");
     }
 
     public function testInstallFailureNpmNotFound()
@@ -89,39 +80,29 @@ class NpmClientTest extends TestCase
 
     public function testUpdate()
     {
-        $this->assertNull($this->client->update());
+        $this->client->update();
+
         Phony::inOrder(
             $this->executableFinder->find->calledWith('npm'),
-            $this->processExecutor->execute->calledWith("'/path/to/npm' 'update'")
+            $this->processExecutorClass->getTimeout->called(),
+            $this->processExecutorClass->setTimeout->calledWith(NpmClient::DEFAULT_TIMEOUT),
+            $this->processExecutor->execute->calledWith("'/path/to/npm' 'update'"),
+            $this->processExecutorClass->setTimeout->calledWith(
+                $this->processExecutorClass->getTimeout->firstCall()->returnValue()
+            )
         );
-        $this->chdir->never()->returned();
-        $this->processExecutor->setTimeout->never()->returned();
+        $this->chdir->never()->called();
     }
 
-    public function testUpdateWorking()
+    public function testUpdateWithWorkingDirectory()
     {
-        $this->assertNull($this->client->update('/path/to/project'));
+        $this->client->update('/path/to/project');
+
         Phony::inOrder(
-            $this->executableFinder->find->calledWith('npm'),
             $this->chdir->calledWith('/path/to/project'),
             $this->processExecutor->execute->calledWith("'/path/to/npm' 'update'"),
             $this->chdir->calledWith('/path/to/cwd')
         );
-        $this->processExecutor->setTimeout->never()->returned();
-    }
-
-    public function testUpdateTimeout()
-    {
-        $this->assertNull($this->client->setTimeout(900));
-        $this->assertNull($this->client->update());
-        Phony::inOrder(
-            $this->executableFinder->find->calledWith('npm'),
-            Phony::onStatic($this->processExecutor)->getTimeout->calledWith(),
-            Phony::onStatic($this->processExecutor)->setTimeout->calledWith(900),
-            $this->processExecutor->execute->calledWith("'/path/to/npm' 'update'"),
-            Phony::onStatic($this->processExecutor)->setTimeout->calledWith(300)
-        );
-        $this->chdir->never()->returned();
     }
 
     public function testUpdateFailureNpmNotFound()

@@ -57,8 +57,11 @@ class NpmBridge
             if ($this->shouldSkipPackage($package)) {
                 $this->io->write('Skipping as NPM is unavailable');
             } else {
-                $this->configureClient($package);
-                $this->client->install(null, $isDevMode);
+                $this->client->install(
+                    null,
+                    $isDevMode,
+                    $this->packageTimeout($package)
+                );
             }
         } else {
             $this->io->write('Nothing to install');
@@ -84,9 +87,10 @@ class NpmBridge
         $package = $composer->getPackage();
 
         if ($this->isDependantPackage($package, true)) {
-            $this->configureClient($package);
-            $this->client->update();
-            $this->client->install(null, true);
+            $timeout = $this->packageTimeout($package);
+
+            $this->client->update(null, $timeout);
+            $this->client->install(null, true, $timeout);
         } else {
             $this->io->write('Nothing to update');
         }
@@ -132,6 +136,8 @@ class NpmBridge
         $packages = $this->vendorFinder->find($composer, $this);
 
         if (count($packages) > 0) {
+            $installationManager = $composer->getInstallationManager();
+
             foreach ($packages as $package) {
                 if ($this->shouldSkipPackage($package)) {
                     $this->io->write(
@@ -152,11 +158,10 @@ class NpmBridge
                     )
                 );
 
-                $this->configureClient($package);
                 $this->client->install(
-                    $composer->getInstallationManager()
-                        ->getInstallPath($package),
-                    false
+                    $installationManager->getInstallPath($package),
+                    false,
+                    $this->packageTimeout($package)
                 );
             }
         } else {
@@ -164,16 +169,14 @@ class NpmBridge
         }
     }
 
-    private function configureClient(PackageInterface $package)
-    {
+    private function packageTimeout(PackageInterface $package) {
         $extra = $package->getExtra();
 
-        // Issue #13 - npm can take a while, so allow a custom timeout
         if (isset($extra[self::EXTRA_KEY][self::EXTRA_KEY_TIMEOUT])) {
-            $this->client->setTimeout(intval($extra[self::EXTRA_KEY][self::EXTRA_KEY_TIMEOUT]));
-        } else {
-            $this->client->setTimeout(null);
+            return intval($extra[self::EXTRA_KEY][self::EXTRA_KEY_TIMEOUT]);
         }
+
+        return null;
     }
 
     private function shouldSkipPackage(PackageInterface $package)
