@@ -52,8 +52,11 @@ class NpmBridge
         );
 
         $package = $composer->getPackage();
+
         if ($this->isDependantPackage($package, $isDevMode)) {
-            if (!$this->shouldSkipPackage($package)) {
+            if ($this->shouldSkipPackage($package)) {
+                $this->io->write('Skipping as NPM is unavailable');
+            } else {
                 $this->configureClient($package);
                 $this->client->install(null, $isDevMode);
             }
@@ -131,6 +134,14 @@ class NpmBridge
         if (count($packages) > 0) {
             foreach ($packages as $package) {
                 if ($this->shouldSkipPackage($package)) {
+                    $this->io->write(
+                        sprintf(
+                            '<info>Skipping optional NPM dependencies for %s ' .
+                            'as npm is unavailable</info>',
+                            $package->getPrettyName()
+                        )
+                    );
+
                     continue;
                 }
 
@@ -156,6 +167,7 @@ class NpmBridge
     private function configureClient(PackageInterface $package)
     {
         $extra = $package->getExtra();
+
         // Issue #13 - npm can take a while, so allow a custom timeout
         if (isset($extra[self::EXTRA_KEY][self::EXTRA_KEY_TIMEOUT])) {
             $this->client->setTimeout(intval($extra[self::EXTRA_KEY][self::EXTRA_KEY_TIMEOUT]));
@@ -171,18 +183,8 @@ class NpmBridge
         }
 
         $extra = $package->getExtra();
-        if (!empty($extra[self::EXTRA_KEY][self::EXTRA_KEY_OPTIONAL])) {
-            $this->io->write(
-                sprintf(
-                    '<info>Skipping optional NPM dependencies for %s as npm is unavailable</info>',
-                    $package->getPrettyName()
-                )
-            );
 
-            return true;
-        }
-
-        return false;
+        return !empty($extra[self::EXTRA_KEY][self::EXTRA_KEY_OPTIONAL]);
     }
 
     private $io;
