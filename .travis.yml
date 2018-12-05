@@ -4,22 +4,21 @@ matrix:
     include:
         - php: 7.0
         - php: 7.1
+        - php: 7.2
+        - php: 7.3
         - php: nightly
     fast_finish: true
     allow_failures:
         - php: nightly
 
-before_install:
-    - phpenv config-rm xdebug.ini || true
-    - composer config --global github-oauth.github.com $GITHUB_TOKEN
-install: composer install --prefer-dist --no-progress --no-interaction
+before_install: phpenv config-rm xdebug.ini || true
+install: composer install --no-progress --no-interaction
 script: scripts/travis
 after_script: scripts/travis-after
 
 env:
     global:
-        - ELOQUENT_PUBLISH_VERSION=7.1
-        - secure: "JrS9dsTpD9MQScxlF/9QPYPFWSWyxRoWsfsEErXZ0diu6WnrObMdq6CAFWe2nYKs52rHBxHaGV6RWtMaaa2SfTLiDpslFZ2pUtTb044FyIjKSIB0yg5O0rq5y6NIFaEvc4VWPRkDfoGy7Kqvq/WI70sAYRYzj2dvLoa3ZrSHohw="
+        - ELOQUENT_PUBLISH_VERSION=7.2
 
 cache:
     directories:
