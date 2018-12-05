@@ -54,16 +54,14 @@ class NpmBridge
         $package = $composer->getPackage();
 
         if ($this->isDependantPackage($package, $isDevMode)) {
+            $isNpmAvailable = $this->client->isAvailable();
             $extra = $package->getExtra();
 
-            if ($this->shouldSkipPackage($extra)) {
+            if (!$isNpmAvailable && $this->isPackageOptional($extra)) {
                 $this->io->write('Skipping as NPM is unavailable');
             } else {
-                $this->client->install(
-                    null,
-                    $isDevMode,
-                    $this->packageTimeout($extra)
-                );
+                $this->client
+                    ->install(null, $isDevMode, $this->packageTimeout($extra));
             }
         } else {
             $this->io->write('Nothing to install');
@@ -138,16 +136,17 @@ class NpmBridge
         $packages = $this->vendorFinder->find($composer, $this);
 
         if (count($packages) > 0) {
+            $isNpmAvailable = $this->client->isAvailable();
             $installationManager = $composer->getInstallationManager();
 
             foreach ($packages as $package) {
                 $extra = $package->getExtra();
 
-                if ($this->shouldSkipPackage($extra)) {
+                if (!$isNpmAvailable && $this->isPackageOptional($extra)) {
                     $this->io->write(
                         sprintf(
-                            '<info>Skipping optional NPM dependencies for %s ' .
-                            'as npm is unavailable</info>',
+                            'Skipping optional NPM dependencies for %s as NPM' .
+                            ' is unavailable',
                             $package->getPrettyName()
                         )
                     );
@@ -181,12 +180,8 @@ class NpmBridge
         return null;
     }
 
-    private function shouldSkipPackage(array $extra)
+    private function isPackageOptional(array $extra)
     {
-        if ($this->client->isAvailable()) {
-            return false;
-        }
-
         return !empty($extra[self::EXTRA_KEY][self::EXTRA_KEY_OPTIONAL]);
     }
 
