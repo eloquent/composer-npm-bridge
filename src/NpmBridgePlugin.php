@@ -52,9 +52,15 @@ class NpmBridgePlugin implements PluginInterface, EventSubscriberInterface
      */
     public static function getSubscribedEvents(): array
     {
+        // Issue #18 - disable if ENV set
+        if (!empty(getenv('COMPOSER_NPM_BRIDGE_DISABLE'))) {
+            return [];
+        }
+
+        // Increased priority to ensure we run before custom installers which are usually default priority
         return [
-            ScriptEvents::POST_INSTALL_CMD => 'onPostInstallCmd',
-            ScriptEvents::POST_UPDATE_CMD => 'onPostUpdateCmd',
+            ScriptEvents::POST_INSTALL_CMD => ['onPostInstallCmd', 1],
+            ScriptEvents::POST_UPDATE_CMD => ['onPostUpdateCmd', 1],
         ];
     }
 

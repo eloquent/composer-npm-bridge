@@ -6,6 +6,7 @@ use Composer\Composer;
 use Composer\Package\Link;
 use Composer\Package\Package;
 use Composer\Package\RootPackage;
+use Eloquent\Composer\NpmBridge\Exception\NpmNotFoundException;
 use Eloquent\Phony\Phpunit\Phony;
 use PHPUnit\Framework\TestCase;
 
@@ -17,6 +18,8 @@ class NpmBridgeTest extends TestCase
         $this->vendorFinder = Phony::mock('Eloquent\Composer\NpmBridge\NpmVendorFinder');
         $this->client = Phony::mock('Eloquent\Composer\NpmBridge\NpmClient');
         $this->bridge = new NpmBridge($this->io->get(), $this->vendorFinder->get(), $this->client->get());
+
+        $this->client->isAvailable->returns(true);
 
         $this->composer = new Composer();
 
@@ -44,12 +47,12 @@ class NpmBridgeTest extends TestCase
 
         Phony::inOrder(
             $this->io->write->calledWith('<info>Installing NPM dependencies for root project</info>'),
-            $this->client->install->calledWith(null, true),
+            $this->client->install->calledWith(null, true, null),
             $this->io->write->calledWith('<info>Installing NPM dependencies for Composer dependencies</info>'),
             $this->io->write->calledWith('<info>Installing NPM dependencies for vendorA/packageA</info>'),
-            $this->client->install->calledWith('/path/to/install/a', false),
+            $this->client->install->calledWith('/path/to/install/a', false, null),
             $this->io->write->calledWith('<info>Installing NPM dependencies for vendorB/packageB</info>'),
-            $this->client->install->calledWith('/path/to/install/b', false)
+            $this->client->install->calledWith('/path/to/install/b', false, null)
         );
     }
 
@@ -61,12 +64,12 @@ class NpmBridgeTest extends TestCase
 
         Phony::inOrder(
             $this->io->write->calledWith('<info>Installing NPM dependencies for root project</info>'),
-            $this->client->install->calledWith(null, false),
+            $this->client->install->calledWith(null, false, null),
             $this->io->write->calledWith('<info>Installing NPM dependencies for Composer dependencies</info>'),
             $this->io->write->calledWith('<info>Installing NPM dependencies for vendorA/packageA</info>'),
-            $this->client->install->calledWith('/path/to/install/a', false),
+            $this->client->install->calledWith('/path/to/install/a', false, null),
             $this->io->write->calledWith('<info>Installing NPM dependencies for vendorB/packageB</info>'),
-            $this->client->install->calledWith('/path/to/install/b', false)
+            $this->client->install->calledWith('/path/to/install/b', false, null)
         );
     }
 
@@ -76,7 +79,7 @@ class NpmBridgeTest extends TestCase
         $this->vendorFinder->find->with($this->composer, $this->bridge)->returns([]);
         $this->bridge->install($this->composer, true);
 
-        $this->client->install->calledWith(null, true);
+        $this->client->install->calledWith(null, true, null);
     }
 
     public function testInstallRootDevDependenciesInProductionMode()
@@ -86,6 +89,147 @@ class NpmBridgeTest extends TestCase
         $this->bridge->install($this->composer, false);
 
         $this->client->install->never()->called();
+    }
+
+    public function testInstallWithRootTimeout()
+    {
+        $this->rootPackage->setRequires([$this->linkRoot3]);
+        $this->rootPackage->setExtra([
+            NpmBridge::EXTRA_KEY => [
+                NpmBridge::EXTRA_KEY_TIMEOUT => 111,
+            ],
+        ]);
+        $this->bridge->install($this->composer, false);
+
+        $this->client->install->calledWith(null, false, 111);
+    }
+
+    public function testInstallWithDependencyTimeout()
+    {
+        $this->rootPackage->setRequires([$this->linkRoot3]);
+        $this->vendorFinder->find->with($this->composer, $this->bridge)->returns([$this->packageA, $this->packageB]);
+        $this->packageA->setExtra([
+            NpmBridge::EXTRA_KEY => [
+                NpmBridge::EXTRA_KEY_TIMEOUT => 111,
+            ],
+        ]);
+        $this->bridge->install($this->composer);
+
+        Phony::inOrder(
+            $this->io->write->calledWith('<info>Installing NPM dependencies for root project</info>'),
+            $this->client->install->calledWith(null, true, null),
+            $this->io->write->calledWith('<info>Installing NPM dependencies for Composer dependencies</info>'),
+            $this->io->write->calledWith('<info>Installing NPM dependencies for vendorA/packageA</info>'),
+            $this->client->install->calledWith('/path/to/install/a', false, 111),
+            $this->io->write->calledWith('<info>Installing NPM dependencies for vendorB/packageB</info>'),
+            $this->client->install->calledWith('/path/to/install/b', false, null)
+        );
+    }
+
+    public function testInstallRootFailureWhenUnavailable()
+    {
+        $this->client->isAvailable->returns(false);
+        $this->expected = new NpmNotFoundException();
+        $this->client->install->throws($this->expected);
+        $this->rootPackage->setRequires([$this->linkRoot3]);
+
+        $this->expectExceptionObject($this->expected);
+        $this->bridge->install($this->composer, false);
+    }
+
+    public function testInstallRootOptionalWhenUnavailable()
+    {
+        $this->client->isAvailable->returns(false);
+        $this->rootPackage->setRequires([$this->linkRoot3]);
+        $this->rootPackage->setExtra([
+            NpmBridge::EXTRA_KEY => [
+                NpmBridge::EXTRA_KEY_OPTIONAL => true,
+            ],
+        ]);
+        $this->bridge->install($this->composer, false);
+
+        Phony::inOrder(
+            $this->io->write->calledWith('<info>Installing NPM dependencies for root project</info>'),
+            $this->io->write->calledWith('Skipping as NPM is unavailable')
+        );
+        $this->client->install->never()->called();
+    }
+
+    public function testInstallRootOptionalWhenAvailable()
+    {
+        $this->client->isAvailable->returns(true);
+        $this->rootPackage->setRequires([$this->linkRoot3]);
+        $this->rootPackage->setExtra([
+            NpmBridge::EXTRA_KEY => [
+                NpmBridge::EXTRA_KEY_OPTIONAL => true,
+            ],
+        ]);
+        $this->bridge->install($this->composer, false);
+
+        Phony::inOrder(
+            $this->io->write->calledWith('<info>Installing NPM dependencies for root project</info>'),
+            $this->client->install->calledWith(null, false, null)
+        );
+    }
+
+    public function testInstallDependencyFailureWhenUnavailable()
+    {
+        $this->client->isAvailable->returns(false);
+        $this->expected = new NpmNotFoundException();
+        $this->client->install->throws($this->expected);
+        $this->vendorFinder->find->with($this->composer, $this->bridge)->returns([$this->packageA, $this->packageB]);
+
+        $this->expectExceptionObject($this->expected);
+        $this->bridge->install($this->composer, false);
+    }
+
+    public function testInstallDependencyOptionalWhenUnavailable()
+    {
+        $this->client->isAvailable->returns(false);
+        $this->vendorFinder->find->with($this->composer, $this->bridge)->returns([$this->packageA, $this->packageB]);
+        $this->packageA->setExtra([
+            NpmBridge::EXTRA_KEY => [
+                NpmBridge::EXTRA_KEY_OPTIONAL => true,
+            ],
+        ]);
+        $this->packageB->setExtra([
+            NpmBridge::EXTRA_KEY => [
+                NpmBridge::EXTRA_KEY_OPTIONAL => true,
+            ],
+        ]);
+        $this->bridge->install($this->composer, false);
+
+        Phony::inOrder(
+            $this->io->write
+                ->calledWith('Skipping optional NPM dependencies for vendorA/packageA as NPM is unavailable'),
+            $this->io->write
+                ->calledWith('Skipping optional NPM dependencies for vendorB/packageB as NPM is unavailable')
+        );
+        $this->client->install->never()->called();
+    }
+
+    public function testInstallDependencyOptionalWhenAvailable()
+    {
+        $this->client->isAvailable->returns(true);
+        $this->vendorFinder->find->with($this->composer, $this->bridge)->returns([$this->packageA, $this->packageB]);
+        $this->packageA->setExtra([
+            NpmBridge::EXTRA_KEY => [
+                NpmBridge::EXTRA_KEY_OPTIONAL => true,
+            ],
+        ]);
+        $this->packageB->setExtra([
+            NpmBridge::EXTRA_KEY => [
+                NpmBridge::EXTRA_KEY_OPTIONAL => true,
+            ],
+        ]);
+        $this->bridge->install($this->composer, false);
+
+        Phony::inOrder(
+            $this->io->write->calledWith('<info>Installing NPM dependencies for vendorA/packageA</info>'),
+            $this->client->install->calledWith('/path/to/install/a', false, null),
+            $this->io->write->calledWith('<info>Installing NPM dependencies for vendorB/packageB</info>'),
+            $this->client->install->calledWith('/path/to/install/b', false, null)
+        );
     }
 
     public function testInstallNothing()
@@ -110,13 +254,13 @@ class NpmBridgeTest extends TestCase
 
         Phony::inOrder(
             $this->io->write->calledWith('<info>Updating NPM dependencies for root project</info>'),
-            $this->client->update->calledWith(),
-            $this->client->install->calledWith(null, true),
+            $this->client->update->calledWith(null, null),
+            $this->client->install->calledWith(null, true, null),
             $this->io->write->calledWith('<info>Installing NPM dependencies for Composer dependencies</info>'),
             $this->io->write->calledWith('<info>Installing NPM dependencies for vendorA/packageA</info>'),
-            $this->client->install->calledWith('/path/to/install/a', false),
+            $this->client->install->calledWith('/path/to/install/a', false, null),
             $this->io->write->calledWith('<info>Installing NPM dependencies for vendorB/packageB</info>'),
-            $this->client->install->calledWith('/path/to/install/b', false)
+            $this->client->install->calledWith('/path/to/install/b', false, null)
         );
     }
 

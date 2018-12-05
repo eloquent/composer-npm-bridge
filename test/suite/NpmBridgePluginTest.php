@@ -47,10 +47,17 @@ class NpmBridgePluginTest extends TestCase
 
     public function testGetSubscribedEvents()
     {
+        putenv('COMPOSER_NPM_BRIDGE_DISABLE=1');
+        $this->assertSame(
+            [],
+            $this->plugin->getSubscribedEvents()
+        );
+        putenv('COMPOSER_NPM_BRIDGE_DISABLE=');
+
         $this->assertSame(
             [
-                ScriptEvents::POST_INSTALL_CMD => 'onPostInstallCmd',
-                ScriptEvents::POST_UPDATE_CMD => 'onPostUpdateCmd',
+                ScriptEvents::POST_INSTALL_CMD => ['onPostInstallCmd', 1],
+                ScriptEvents::POST_UPDATE_CMD => ['onPostUpdateCmd', 1],
             ],
             $this->plugin->getSubscribedEvents()
         );
