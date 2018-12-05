@@ -17,7 +17,7 @@ class NpmBridgeTest extends TestCase
         $this->io = Phony::mock('Composer\IO\IOInterface');
         $this->vendorFinder = Phony::mock('Eloquent\Composer\NpmBridge\NpmVendorFinder');
         $this->client = Phony::mock('Eloquent\Composer\NpmBridge\NpmClient');
-        $this->client->valid->returns(true);
+        $this->client->isAvailable->returns(true);
         $this->bridge = new NpmBridge($this->io->get(), $this->vendorFinder->get(), $this->client->get());
 
         $this->composer = new Composer();
@@ -50,16 +50,16 @@ class NpmBridgeTest extends TestCase
 
         Phony::inOrder(
             $this->io->write->calledWith('<info>Installing NPM dependencies for root project</info>'),
-            $this->client->valid->calledWith(),
+            $this->client->isAvailable->calledWith(),
             $this->client->install->calledWith(null, true),
             $this->io->write->calledWith('<info>Installing NPM dependencies for Composer dependencies</info>'),
-            $this->client->valid->calledWith(),
+            $this->client->isAvailable->calledWith(),
             $this->io->write->calledWith('<info>Installing NPM dependencies for vendorA/packageA</info>'),
             $this->client->install->calledWith('/path/to/install/a', false),
-            $this->client->valid->calledWith(),
+            $this->client->isAvailable->calledWith(),
             $this->io->write->calledWith('<info>Installing NPM dependencies for vendorB/packageB</info>'),
             $this->client->install->calledWith('/path/to/install/b', false),
-            $this->client->valid->calledWith(),
+            $this->client->isAvailable->calledWith(),
             $this->io->write->calledWith('<info>Installing NPM dependencies for vendorC/packageC</info>'),
             $this->client->setTimeout->calledWith(900),
             $this->client->install->calledWith('/path/to/install/c', false)
@@ -74,16 +74,16 @@ class NpmBridgeTest extends TestCase
 
         Phony::inOrder(
             $this->io->write->calledWith('<info>Installing NPM dependencies for root project</info>'),
-            $this->client->valid->calledWith(),
+            $this->client->isAvailable->calledWith(),
             $this->client->install->calledWith(null, false),
             $this->io->write->calledWith('<info>Installing NPM dependencies for Composer dependencies</info>'),
-            $this->client->valid->calledWith(),
+            $this->client->isAvailable->calledWith(),
             $this->io->write->calledWith('<info>Installing NPM dependencies for vendorA/packageA</info>'),
             $this->client->install->calledWith('/path/to/install/a', false),
-            $this->client->valid->calledWith(),
+            $this->client->isAvailable->calledWith(),
             $this->io->write->calledWith('<info>Installing NPM dependencies for vendorB/packageB</info>'),
             $this->client->install->calledWith('/path/to/install/b', false),
-            $this->client->valid->calledWith(),
+            $this->client->isAvailable->calledWith(),
             $this->io->write->calledWith('<info>Installing NPM dependencies for vendorC/packageC</info>'),
             $this->client->setTimeout->calledWith(900),
             $this->client->install->calledWith('/path/to/install/c', false)
@@ -96,7 +96,7 @@ class NpmBridgeTest extends TestCase
         $this->vendorFinder->find->with($this->composer, $this->bridge)->returns([]);
         $this->bridge->install($this->composer, true);
 
-        $this->client->valid->calledWith();
+        $this->client->isAvailable->calledWith();
         $this->client->install->calledWith(null, true);
     }
 
@@ -125,7 +125,7 @@ class NpmBridgeTest extends TestCase
 
     public function testInstallOptional()
     {
-        $this->client->valid->returns(false);
+        $this->client->isAvailable->returns(false);
         $this->client->install->with('/path/to/install/a')->throws(NpmNotFoundException::class);
         $this->client->install->with('/path/to/install/c')->returns();
 
@@ -140,9 +140,9 @@ class NpmBridgeTest extends TestCase
             $this->io->write->calledWith('<info>Installing NPM dependencies for root project</info>'),
             $this->io->write->calledWith('Nothing to install'),
             $this->io->write->calledWith('<info>Installing NPM dependencies for Composer dependencies</info>'),
-            $this->client->valid->calledWith(),
+            $this->client->isAvailable->calledWith(),
             $this->io->write->calledWith('<info>Skipping optional NPM dependencies for vendorC/packageC as npm is unavailable</info>'),
-            $this->client->valid->calledWith(),
+            $this->client->isAvailable->calledWith(),
             $this->io->write->calledWith('<info>Installing NPM dependencies for vendorA/packageA</info>'),
             $this->client->install->calledWith('/path/to/install/a', false)
         );
@@ -156,14 +156,13 @@ class NpmBridgeTest extends TestCase
 
         Phony::inOrder(
             $this->io->write->calledWith('<info>Updating NPM dependencies for root project</info>'),
-            $this->client->valid->calledWith(),
             $this->client->update->calledWith(),
             $this->client->install->calledWith(null, true),
             $this->io->write->calledWith('<info>Installing NPM dependencies for Composer dependencies</info>'),
-            $this->client->valid->calledWith(),
+            $this->client->isAvailable->calledWith(),
             $this->io->write->calledWith('<info>Installing NPM dependencies for vendorA/packageA</info>'),
             $this->client->install->calledWith('/path/to/install/a', false),
-            $this->client->valid->calledWith(),
+            $this->client->isAvailable->calledWith(),
             $this->io->write->calledWith('<info>Installing NPM dependencies for vendorB/packageB</info>'),
             $this->client->install->calledWith('/path/to/install/b', false)
         );

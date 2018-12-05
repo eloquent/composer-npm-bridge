@@ -90,11 +90,11 @@ class NpmClient
     }
 
     /**
-     * Check is npm is available
+     * Check if the npm executable is available.
      *
-     * @return bool
+     * @return bool True if available.
      */
-    public function valid()
+    public function isAvailable()
     {
         try {
             $this->npmPath();

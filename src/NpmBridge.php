@@ -178,7 +178,7 @@ class NpmBridge
 
     private function shouldSkipPackage(PackageInterface $package)
     {
-        if ($this->client->valid()) {
+        if ($this->client->isAvailable()) {
             return false;
         }
 
