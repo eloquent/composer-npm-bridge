@@ -1,5 +1,22 @@
 # Composer NPM bridge changelog
 
+## 4.1.0 (2018-12-06)
+
+- **[IMPROVED]** The NPM bridge can now be completely disabled by setting the
+  `COMPOSER_NPM_BRIDGE_DISABLE` environment variable to a non-empty value
+  ([#18], [#19] - thanks [@driskell]).
+- **[IMPROVED]** Custom timeouts can now be set on a per-package basis by
+  setting the `extra.npm-bridge.timeout` option in `composer.json`
+  ([#13], [#19] - thanks [@driskell]).
+- **[IMPROVED]** Packages can now choose whether to allow the `npm` executable
+  to be absent at install  time by setting the `extra.npm-bridge.optional`
+  option in `composer.json` ([#19] - thanks [@driskell]).
+
+[#13]: https://github.com/eloquent/composer-npm-bridge/issues/13
+[#18]: https://github.com/eloquent/composer-npm-bridge/issues/18
+[#19]: https://github.com/eloquent/composer-npm-bridge/pull/19
+[@driskell]: https://github.com/driskell
+
 ## 4.0.1 (2017-09-19)
 
 - **[FIXED]** Fixed "class not found" errors when the plugin is removed by
