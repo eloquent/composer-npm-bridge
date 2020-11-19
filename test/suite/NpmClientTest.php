@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class NpmClientTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->processExecutor = Phony::mock('Composer\Util\ProcessExecutor');
         $this->executableFinder = Phony::mock('Symfony\Component\Process\ExecutableFinder');
