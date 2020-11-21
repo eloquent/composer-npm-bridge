@@ -6,6 +6,7 @@ use Composer\Composer;
 use Composer\Package\Link;
 use Composer\Package\Package;
 use Composer\Package\RootPackage;
+use Composer\Semver\Constraint\Constraint;
 use Eloquent\Composer\NpmBridge\Exception\NpmNotFoundException;
 use Eloquent\Phony\Phpunit\Phony;
 use PHPUnit\Framework\TestCase;
@@ -27,9 +28,9 @@ class NpmBridgeTest extends TestCase
         $this->packageA = new Package('vendorA/packageA', '1.0.0.0', '1.0.0');
         $this->packageB = new Package('vendorB/packageB', '1.0.0.0', '1.0.0');
 
-        $this->linkRoot1 = new Link('vendor/package', 'vendorX/packageX');
-        $this->linkRoot2 = new Link('vendor/package', 'vendorY/packageY');
-        $this->linkRoot3 = new Link('vendor/package', 'eloquent/composer-npm-bridge');
+        $this->linkRoot1 = new Link('vendor/package', 'vendorX/packageX', new Constraint('=', '1.0.0.0'));
+        $this->linkRoot2 = new Link('vendor/package', 'vendorY/packageY', new Constraint('=', '1.0.0.0'));
+        $this->linkRoot3 = new Link('vendor/package', 'eloquent/composer-npm-bridge', new Constraint('=', '1.0.0.0'));
 
         $this->installationManager = Phony::mock('Composer\Installer\InstallationManager');
         $this->installationManager->getInstallPath->with($this->packageA)->returns('/path/to/install/a');
