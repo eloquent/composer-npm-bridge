@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class NpmBridgeFactoryTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->factory = NpmBridgeFactory::create();
 

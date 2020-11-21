@@ -4,26 +4,24 @@
     beStrictAboutChangesToGlobalState="true"
     beStrictAboutOutputDuringTests="true"
     beStrictAboutTestsThatDoNotTestAnything="true"
-    mapTestClassNameToCoveredClassName="true"
     convertErrorsToExceptions="true"
 >
     <testsuites>
-        <testsuite>
+        <testsuite name="all">
             <directory>test/suite</directory>
         </testsuite>
     </testsuites>
 
-    <logging>
-        <log type="coverage-html" target="coverage" charset="UTF-8" yui="true" highlight="true" />
-        <log type="coverage-clover" target="coverage/coverage.xml" />
-        <log type="coverage-text" target="coverage/coverage.txt" />
-    </logging>
-
-    <filter>
-        <whitelist>
+    <coverage cacheDirectory="coverage">
+        <include>
             <directory>src</directory>
-        </whitelist>
-    </filter>
+        </include>
+        <report>
+            <html outputDirectory="coverage" />
+            <clover outputFile="coverage/coverage.xml" />
+            <text outputFile="coverage/coverage.txt" />
+        </report>
+    </coverage>
 
     <php>
         <ini name="error_reporting" value="-1"/>

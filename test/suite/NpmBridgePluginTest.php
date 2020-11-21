@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class NpmBridgePluginTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->bridgeFactory = Phony::mock('Eloquent\Composer\NpmBridge\NpmBridgeFactory');
         $this->plugin = new NpmBridgePlugin($this->bridgeFactory->get());
@@ -23,7 +23,7 @@ class NpmBridgePluginTest extends TestCase
         $this->bridgeFactory->createBridge->returns($this->bridge);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         Phony::restoreGlobalFunctions();
     }
