@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 
 class NpmBridgeTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->io = Phony::mock('Composer\IO\IOInterface');
         $this->vendorFinder = Phony::mock('Eloquent\Composer\NpmBridge\NpmVendorFinder');

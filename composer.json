@@ -13,14 +13,16 @@
     ],
     "type": "composer-plugin",
     "require": {
-        "php": ">=7.1",
+        "php": ">=7.2",
         "composer-plugin-api": "^2"
     },
     "require-dev": {
         "composer/composer": "^2",
-        "eloquent/phony-phpunit": "^4",
+        "eloquent/code-style": "^1",
+        "eloquent/phony-phpunit": "^6",
+        "friendsofphp/php-cs-fixer": "^2",
         "errors/exceptions": "^0.2",
-        "phpunit/phpunit": "^7"
+        "phpunit/phpunit": "^8"
     },
     "autoload": {
         "psr-4": {
@@ -29,10 +31,5 @@
     },
     "extra": {
         "class": "Eloquent\\Composer\\NpmBridge\\NpmBridgePlugin"
-    },
-    "config": {
-        "platform": {
-            "php": "7.1.99999"
-        }
     }
 }

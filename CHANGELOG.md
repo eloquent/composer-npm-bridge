@@ -1,5 +1,16 @@
 # Composer NPM bridge changelog
 
+## Next release
+
+- **[BC BREAK]** Dropped support for PHP <7.2.
+- **[BC BREAK]** Dropped support for Composer <2.
+- **[IMPROVED]** Added support for Composer 2 ([#22], [#24] - thanks
+  [@bryonbean]).
+
+[#22]: https://github.com/eloquent/composer-npm-bridge/issues/22
+[#24]: https://github.com/eloquent/composer-npm-bridge/pull/24
+[@bryonbean]: https://github.com/bryonbean
+
 ## 4.1.0 (2018-12-06)
 
 - **[IMPROVED]** The NPM bridge can now be completely disabled by setting the
