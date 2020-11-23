@@ -7,12 +7,13 @@ use Composer\IO\NullIO;
 use Composer\Package\Link;
 use Composer\Package\Package;
 use Composer\Repository\ArrayRepository;
+use Composer\Semver\Constraint\Constraint;
 use Eloquent\Phony\Phpunit\Phony;
 use PHPUnit\Framework\TestCase;
 
 class NpmVendorFinderTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->finder = new NpmVendorFinder();
 
@@ -27,14 +28,14 @@ class NpmVendorFinderTest extends TestCase
         $this->packageC = new Package('vendorC/packageC', '1.0.0.0', '1.0.0');
         $this->packageD = new Package('vendorD/packageD', '1.0.0.0', '1.0.0');
 
-        $this->linkA1 = new Link('vendorA/packageA', 'vendorX/packageX');
-        $this->linkA2 = new Link('vendorA/packageA', 'vendorY/packageY');
-        $this->linkB1 = new Link('vendorB/packageB', 'vendorZ/packageZ');
-        $this->linkB2 = new Link('vendorB/packageB', 'eloquent/composer-npm-bridge');
-        $this->linkC1 = new Link('vendorC/packageC', 'vendorZ/packageZ');
-        $this->linkC2 = new Link('vendorC/packageC', 'eloquent/composer-npm-bridge');
-        $this->linkD1 = new Link('vendorD/packageD', 'eloquent/composer-npm-bridge');
-        $this->linkD2 = new Link('vendorD/packageD', 'vendorZ/packageZ');
+        $this->linkA1 = new Link('vendorA/packageA', 'vendorX/packageX', new Constraint('=', '1.0.0.0'));
+        $this->linkA2 = new Link('vendorA/packageA', 'vendorY/packageY', new Constraint('=', '1.0.0.0'));
+        $this->linkB1 = new Link('vendorB/packageB', 'vendorZ/packageZ', new Constraint('=', '1.0.0.0'));
+        $this->linkB2 = new Link('vendorB/packageB', 'eloquent/composer-npm-bridge', new Constraint('=', '1.0.0.0'));
+        $this->linkC1 = new Link('vendorC/packageC', 'vendorZ/packageZ', new Constraint('=', '1.0.0.0'));
+        $this->linkC2 = new Link('vendorC/packageC', 'eloquent/composer-npm-bridge', new Constraint('=', '1.0.0.0'));
+        $this->linkD1 = new Link('vendorD/packageD', 'eloquent/composer-npm-bridge', new Constraint('=', '1.0.0.0'));
+        $this->linkD2 = new Link('vendorD/packageD', 'vendorZ/packageZ', new Constraint('=', '1.0.0.0'));
 
         $this->composer->setRepositoryManager($this->repositoryManager->get());
         $this->repositoryManager->getLocalRepository->returns($this->localRepository);

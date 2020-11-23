@@ -27,10 +27,10 @@ class NpmVendorFinder
 
         foreach ($packages as $package) {
             if ($bridge->isDependantPackage($package, false)) {
-                $dependantPackages[] = $package;
+                $dependantPackages[$package->getName()] = $package;
             }
         }
 
-        return $dependantPackages;
+        return array_values($dependantPackages);
     }
 }
