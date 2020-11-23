@@ -1,6 +1,6 @@
 # Composer NPM bridge changelog
 
-## Next release
+## 5.0.0 (2020-11-23)
 
 - **[BC BREAK]** Dropped support for PHP <7.2.
 - **[BC BREAK]** Dropped support for Composer <2.
