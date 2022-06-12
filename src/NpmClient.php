@@ -67,7 +67,7 @@ class NpmClient
         if ($isDevMode) {
             $arguments = ['install'];
         } else {
-            $arguments = ['install', '--production'];
+            $arguments = ['install', '--omit=dev'];
         }
 
         if ($timeout === null) {
