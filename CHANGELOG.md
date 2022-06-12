@@ -1,5 +1,13 @@
 # Composer NPM bridge changelog
 
+## 5.0.1 (2022-06-12)
+
+- **[FIXED]** Fixed NPM warnings about using `--omit=dev` ([#25] - thanks
+  [@NiklasBr]).
+
+[#25]: https://github.com/eloquent/composer-npm-bridge/pull/25
+[@niklasbr]: https://github.com/NiklasBr
+
 ## 5.0.0 (2020-11-23)
 
 - **[BC BREAK]** Dropped support for PHP <7.2.
@@ -20,7 +28,7 @@
   setting the `extra.npm-bridge.timeout` option in `composer.json`
   ([#13], [#19] - thanks [@driskell]).
 - **[IMPROVED]** Packages can now choose whether to allow the `npm` executable
-  to be absent at install  time by setting the `extra.npm-bridge.optional`
+  to be absent at install time by setting the `extra.npm-bridge.optional`
   option in `composer.json` ([#19] - thanks [@driskell]).
 
 [#13]: https://github.com/eloquent/composer-npm-bridge/issues/13
@@ -39,8 +47,8 @@
 
 ## 4.0.0 (2017-07-12)
 
-- **[BC BREAK]** With the introduction of NPM's [`package-lock.json`], *Composer
-  NPM bridge* no longer manages shrinkwrap files.
+- **[BC BREAK]** With the introduction of NPM's [`package-lock.json`], _Composer
+  NPM bridge_ no longer manages shrinkwrap files.
 - **[BC BREAK]** Dropped support for PHP 5.
 
 [`package-lock.json`]: https://docs.npmjs.com/files/package-lock.json
